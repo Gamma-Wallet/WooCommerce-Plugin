@@ -36,7 +36,7 @@ final class Gamma_Wallet_Blocks_Support extends AbstractPaymentMethodType {
 
 	public function get_payment_method_data() {
 		return array(
-			'title'       => $this->get_setting( 'title', __( 'Use Store Credits with Gamma', 'gamma-wallet' ) ),
+			'title'       => $this->get_setting( 'title', __( 'Use Store Credits with Gamma', 'gamma-wallet-for-woocommerce' ) ),
 			'description' => $this->get_setting( 'description', '' ),
 			'supports'    => array( 'products' ),
 			'icon'        => GAMMA_WALLET_URL . 'assets/images/gamma-mark-64.png',

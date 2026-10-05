@@ -142,8 +142,8 @@ class Gamma_Wallet_Settings {
 
 	public static function menu(): void {
 		add_menu_page(
-			__( 'Gamma Wallet', 'gamma-wallet' ),
-			__( 'Gamma Wallet', 'gamma-wallet' ),
+			__( 'Gamma Wallet', 'gamma-wallet-for-woocommerce' ),
+			__( 'Gamma Wallet', 'gamma-wallet-for-woocommerce' ),
 			'manage_woocommerce',
 			self::PAGE,
 			array( __CLASS__, 'render' ),
@@ -165,9 +165,9 @@ class Gamma_Wallet_Settings {
 		?>
 		<div class="wrap gamma-wallet-admin">
 			<h1 class="gamma-wallet-admin-title">
-				<img src="<?php echo esc_url( GAMMA_WALLET_URL . 'assets/images/gamma-logo.png' ); ?>" alt="<?php esc_attr_e( 'Gamma Wallet', 'gamma-wallet' ); ?>" height="36" style="height:36px;width:auto;vertical-align:middle">
+				<img src="<?php echo esc_url( GAMMA_WALLET_URL . 'assets/images/gamma-logo.png' ); ?>" alt="<?php esc_attr_e( 'Gamma Wallet', 'gamma-wallet-for-woocommerce' ); ?>" height="36" style="height:36px;width:auto;vertical-align:middle">
 			</h1>
-			<p><?php esc_html_e( 'Your customers earn a reward for every paid order and can settle an order with the store credits they hold at your shop, by scanning a QR code with the Gamma Wallet app.', 'gamma-wallet' ); ?></p>
+			<p><?php esc_html_e( 'Your customers earn a reward for every paid order and can settle an order with the store credits they hold at your shop, by scanning a QR code with the Gamma Wallet app.', 'gamma-wallet-for-woocommerce' ); ?></p>
 
 			<?php self::render_message( $message ); ?>
 
@@ -175,10 +175,10 @@ class Gamma_Wallet_Settings {
 				<input type="hidden" name="action" value="gamma_wallet_save">
 				<?php wp_nonce_field( 'gamma_wallet_save' ); ?>
 
-				<h2><?php esc_html_e( 'Connection', 'gamma-wallet' ); ?></h2>
+				<h2><?php esc_html_e( 'Connection', 'gamma-wallet-for-woocommerce' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
-						<th scope="row"><label for="gamma-token"><?php esc_html_e( 'Integration token', 'gamma-wallet' ); ?></label></th>
+						<th scope="row"><label for="gamma-token"><?php esc_html_e( 'Integration token', 'gamma-wallet-for-woocommerce' ); ?></label></th>
 						<td>
 							<input type="password" id="gamma-token" name="gamma_token" class="regular-text" autocomplete="off" spellcheck="false"
 								placeholder="<?php echo esc_attr( '' === $token ? 'GWINT_…' : self::masked( $token ) ); ?>">
@@ -187,67 +187,67 @@ class Gamma_Wallet_Settings {
 								echo wp_kses(
 									sprintf(
 										/* translators: %s: link to Gamma Business */
-										__( 'Create it in %s → Integrations, as the business owner. It starts with GWINT_ and is shown only once.', 'gamma-wallet' ),
+										__( 'Create it in %s → Integrations, as the business owner. It starts with GWINT_ and is shown only once.', 'gamma-wallet-for-woocommerce' ),
 										'<a href="https://business.gamma-wallet.com" target="_blank" rel="noopener noreferrer">Gamma Business</a>'
 									),
 									array( 'a' => array( 'href' => array(), 'target' => array(), 'rel' => array() ) )
 								);
 								?>
 								<?php if ( '' !== $token ) : ?>
-									<br><?php esc_html_e( 'A token is saved. Leave the field empty to keep it.', 'gamma-wallet' ); ?>
+									<br><?php esc_html_e( 'A token is saved. Leave the field empty to keep it.', 'gamma-wallet-for-woocommerce' ); ?>
 								<?php endif; ?>
 							</p>
 							<?php if ( '' !== $token ) : ?>
-								<label><input type="checkbox" name="gamma_remove_token" value="1"> <?php esc_html_e( 'Remove the saved token (disconnects the shop)', 'gamma-wallet' ); ?></label>
+								<label><input type="checkbox" name="gamma_remove_token" value="1"> <?php esc_html_e( 'Remove the saved token (disconnects the shop)', 'gamma-wallet-for-woocommerce' ); ?></label>
 							<?php endif; ?>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Status', 'gamma-wallet' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Status', 'gamma-wallet-for-woocommerce' ); ?></th>
 						<td><?php self::render_connection( $token, $connection ); ?></td>
 					</tr>
 				</table>
 
-				<h2><?php esc_html_e( 'Rewards for paid orders', 'gamma-wallet' ); ?></h2>
+				<h2><?php esc_html_e( 'Rewards for paid orders', 'gamma-wallet-for-woocommerce' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Rewards', 'gamma-wallet' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Rewards', 'gamma-wallet-for-woocommerce' ); ?></th>
 						<td>
 							<label><input type="checkbox" name="gamma_rewards_enabled" value="yes" <?php checked( 'yes', $settings['rewards_enabled'] ); ?>>
-								<?php esc_html_e( 'Give customers a QR code to collect their reward for each paid order', 'gamma-wallet' ); ?></label>
+								<?php esc_html_e( 'Give customers a QR code to collect their reward for each paid order', 'gamma-wallet-for-woocommerce' ); ?></label>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Payment methods that earn a reward', 'gamma-wallet' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Payment methods that earn a reward', 'gamma-wallet-for-woocommerce' ); ?></th>
 						<td>
 							<?php self::render_methods(); ?>
-							<p class="description"><?php esc_html_e( 'Paid at checkout (card and the like): the reward is given the moment the payment is confirmed, and its QR code is on the order confirmation page and in the order email.', 'gamma-wallet' ); ?></p>
-							<p class="description"><?php esc_html_e( 'Paid later (cash on delivery, bank transfer, cheque): nothing is paid when the order is placed, so the reward is given only when you mark the order Completed. The customer then receives an email of its own with the QR code, also if they bought as a guest. You can send it again from the order screen.', 'gamma-wallet' ); ?></p>
-							<p class="description"><?php esc_html_e( 'Orders settled with store credits never earn a reward.', 'gamma-wallet' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Paid at checkout (card and the like): the reward is given the moment the payment is confirmed, and its QR code is on the order confirmation page and in the order email.', 'gamma-wallet-for-woocommerce' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Paid later (cash on delivery, bank transfer, cheque): nothing is paid when the order is placed, so the reward is given only when you mark the order Completed. The customer then receives an email of its own with the QR code, also if they bought as a guest. You can send it again from the order screen.', 'gamma-wallet-for-woocommerce' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Orders settled with store credits never earn a reward.', 'gamma-wallet-for-woocommerce' ); ?></p>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Email', 'gamma-wallet' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Email', 'gamma-wallet-for-woocommerce' ); ?></th>
 						<td>
 							<label><input type="checkbox" name="gamma_reward_email" value="yes" <?php checked( 'yes', $settings['reward_email'] ); ?>>
-								<?php esc_html_e( 'Put the reward QR code in the order email to the customer', 'gamma-wallet' ); ?></label>
+								<?php esc_html_e( 'Put the reward QR code in the order email to the customer', 'gamma-wallet-for-woocommerce' ); ?></label>
 						</td>
 					</tr>
 				</table>
 
-				<h2><?php esc_html_e( 'Store credits at checkout', 'gamma-wallet' ); ?></h2>
+				<h2><?php esc_html_e( 'Store credits at checkout', 'gamma-wallet-for-woocommerce' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Use Store Credits with Gamma', 'gamma-wallet' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Use Store Credits with Gamma', 'gamma-wallet-for-woocommerce' ); ?></th>
 						<td>
-							<p><strong><?php echo $credits_on ? esc_html__( 'On', 'gamma-wallet' ) : esc_html__( 'Off', 'gamma-wallet' ); ?></strong> —
-								<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . Gamma_Wallet_Credits_Gateway::ID ) ); ?>"><?php esc_html_e( 'Turn on or off in WooCommerce → Settings → Payments', 'gamma-wallet' ); ?></a></p>
-							<p class="description"><?php esc_html_e( 'At checkout, the customer scans a QR code with Gamma Wallet and the whole order is settled from their store credits. The code is valid for 60 seconds. An order settled this way earns no reward.', 'gamma-wallet' ); ?></p>
+							<p><strong><?php echo $credits_on ? esc_html__( 'On', 'gamma-wallet-for-woocommerce' ) : esc_html__( 'Off', 'gamma-wallet-for-woocommerce' ); ?></strong> —
+								<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . Gamma_Wallet_Credits_Gateway::ID ) ); ?>"><?php esc_html_e( 'Turn on or off in WooCommerce → Settings → Payments', 'gamma-wallet-for-woocommerce' ); ?></a></p>
+							<p class="description"><?php esc_html_e( 'At checkout, the customer scans a QR code with Gamma Wallet and the whole order is settled from their store credits. The code is valid for 60 seconds. An order settled this way earns no reward.', 'gamma-wallet-for-woocommerce' ); ?></p>
 						</td>
 					</tr>
 				</table>
 
-				<?php submit_button( __( 'Save and check the connection', 'gamma-wallet' ) ); ?>
+				<?php submit_button( __( 'Save and check the connection', 'gamma-wallet-for-woocommerce' ) ); ?>
 			</form>
 		</div>
 		<?php
@@ -269,38 +269,38 @@ class Gamma_Wallet_Settings {
 				checked( self::method_earns_reward( $id ), true, false ),
 				esc_html( $title ),
 				$pay_later
-					? esc_html__( 'paid later: the reward is emailed when you mark the order Completed', 'gamma-wallet' )
-					: esc_html__( 'paid at checkout: the reward is given when the payment is confirmed', 'gamma-wallet' )
+					? esc_html__( 'paid later: the reward is emailed when you mark the order Completed', 'gamma-wallet-for-woocommerce' )
+					: esc_html__( 'paid at checkout: the reward is given when the payment is confirmed', 'gamma-wallet-for-woocommerce' )
 			);
 			++$shown;
 		}
 		if ( 0 === $shown ) {
-			echo '<p>' . esc_html__( 'No payment method is turned on in WooCommerce yet.', 'gamma-wallet' ) . '</p>';
+			echo '<p>' . esc_html__( 'No payment method is turned on in WooCommerce yet.', 'gamma-wallet-for-woocommerce' ) . '</p>';
 		}
 	}
 
 	private static function render_connection( string $token, ?array $connection ): void {
 		if ( '' === $token ) {
-			echo '<span style="color:#b32d2e">' . esc_html__( 'Not connected. Paste your integration token above.', 'gamma-wallet' ) . '</span>';
+			echo '<span style="color:#b32d2e">' . esc_html__( 'Not connected. Paste your integration token above.', 'gamma-wallet-for-woocommerce' ) . '</span>';
 			return;
 		}
 		if ( ! $connection ) {
-			echo esc_html__( 'Not checked yet.', 'gamma-wallet' );
+			echo esc_html__( 'Not checked yet.', 'gamma-wallet-for-woocommerce' );
 		} elseif ( ! empty( $connection['error'] ) ) {
 			echo '<span style="color:#b32d2e">' . esc_html( $connection['error'] ) . '</span>';
 		} else {
 			$days = (int) ( $connection['token']['daysLeft'] ?? 0 );
-			echo '<span style="color:#00a32a">&#10003; ' . esc_html__( 'Connected', 'gamma-wallet' ) . '</span><br>';
+			echo '<span style="color:#00a32a">&#10003; ' . esc_html__( 'Connected', 'gamma-wallet-for-woocommerce' ) . '</span><br>';
 			printf(
 				/* translators: 1: business name, 2: currency code */
-				esc_html__( 'Business: %1$s · Currency: %2$s', 'gamma-wallet' ),
+				esc_html__( 'Business: %1$s · Currency: %2$s', 'gamma-wallet-for-woocommerce' ),
 				'<strong>' . esc_html( $connection['businessName'] ?? '' ) . '</strong>',
 				'<strong>' . esc_html( $connection['currencyCode'] ?? '' ) . '</strong>'
 			);
 			echo '<br>';
 			printf(
 				/* translators: 1: token as shown in Gamma Business, 2: days left */
-				esc_html__( 'Token %1$s, %2$d day(s) left', 'gamma-wallet' ),
+				esc_html__( 'Token %1$s, %2$d day(s) left', 'gamma-wallet-for-woocommerce' ),
 				'<code>' . esc_html( self::masked( $token ) ) . '</code>',
 				(int) $days
 			);
@@ -311,7 +311,7 @@ class Gamma_Wallet_Settings {
 				echo '<br><span style="color:#b32d2e">' . esc_html(
 					sprintf(
 						/* translators: 1: shop currency, 2: business currency */
-						__( 'Your shop sells in %1$s but your Gamma business uses %2$s. Orders cannot be sent to Gamma until they match.', 'gamma-wallet' ),
+						__( 'Your shop sells in %1$s but your Gamma business uses %2$s. Orders cannot be sent to Gamma until they match.', 'gamma-wallet-for-woocommerce' ),
 						get_woocommerce_currency(),
 						self::business_currency()
 					)
@@ -321,20 +321,20 @@ class Gamma_Wallet_Settings {
 				echo '<br><span class="description">' . esc_html(
 					sprintf(
 						/* translators: %s: date and time */
-						__( 'Checked %s', 'gamma-wallet' ),
+						__( 'Checked %s', 'gamma-wallet-for-woocommerce' ),
 						wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), (int) $connection['checkedOn'] )
 					)
 				) . '</span>';
 			}
 		}
-		echo ' <a class="button button-small" style="margin-left:.5em" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=gamma_wallet_test' ), 'gamma_wallet_test' ) ) . '">' . esc_html__( 'Check again', 'gamma-wallet' ) . '</a>';
+		echo ' <a class="button button-small" style="margin-left:.5em" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=gamma_wallet_test' ), 'gamma_wallet_test' ) ) . '">' . esc_html__( 'Check again', 'gamma-wallet-for-woocommerce' ) . '</a>';
 	}
 
 	private static function render_message( string $message ): void {
 		$messages = array(
-			'saved'         => array( 'success', __( 'Settings saved.', 'gamma-wallet' ) ),
-			'invalid-token' => array( 'error', __( 'That is not an integration token. It starts with GWINT_ and is 49 characters long. Nothing was changed.', 'gamma-wallet' ) ),
-			'removed'       => array( 'success', __( 'The token was removed. The shop is no longer connected to Gamma.', 'gamma-wallet' ) ),
+			'saved'         => array( 'success', __( 'Settings saved.', 'gamma-wallet-for-woocommerce' ) ),
+			'invalid-token' => array( 'error', __( 'That is not an integration token. It starts with GWINT_ and is 49 characters long. Nothing was changed.', 'gamma-wallet-for-woocommerce' ) ),
+			'removed'       => array( 'success', __( 'The token was removed. The shop is no longer connected to Gamma.', 'gamma-wallet-for-woocommerce' ) ),
 		);
 		if ( isset( $messages[ $message ] ) ) {
 			printf( '<div class="notice notice-%1$s is-dismissible"><p>%2$s</p></div>', esc_attr( $messages[ $message ][0] ), esc_html( $messages[ $message ][1] ) );
@@ -345,7 +345,7 @@ class Gamma_Wallet_Settings {
 
 	public static function save(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to change these settings.', 'gamma-wallet' ) );
+			wp_die( esc_html__( 'You are not allowed to change these settings.', 'gamma-wallet-for-woocommerce' ) );
 		}
 		check_admin_referer( 'gamma_wallet_save' );
 
@@ -392,7 +392,7 @@ class Gamma_Wallet_Settings {
 
 	public static function test(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to do this.', 'gamma-wallet' ) );
+			wp_die( esc_html__( 'You are not allowed to do this.', 'gamma-wallet-for-woocommerce' ) );
 		}
 		check_admin_referer( 'gamma_wallet_test' );
 		self::check_connection();
@@ -428,26 +428,26 @@ class Gamma_Wallet_Settings {
 	public static function explain( Gamma_Wallet_Api_Error $e ): string {
 		switch ( $e->identifier ) {
 			case '0388':
-				return __( 'Gamma does not recognise this token. Copy it again from Gamma Business → Integrations.', 'gamma-wallet' );
+				return __( 'Gamma does not recognise this token. Copy it again from Gamma Business → Integrations.', 'gamma-wallet-for-woocommerce' );
 			case '0389':
-				return __( 'This token was disabled or replaced. Create a new one in Gamma Business → Integrations.', 'gamma-wallet' );
+				return __( 'This token was disabled or replaced. Create a new one in Gamma Business → Integrations.', 'gamma-wallet-for-woocommerce' );
 			case '0390':
-				return __( 'This token has expired. Create a new one in Gamma Business → Integrations.', 'gamma-wallet' );
+				return __( 'This token has expired. Create a new one in Gamma Business → Integrations.', 'gamma-wallet-for-woocommerce' );
 			case '0393':
-				return __( 'The business this token belongs to is not available in Gamma.', 'gamma-wallet' );
+				return __( 'The business this token belongs to is not available in Gamma.', 'gamma-wallet-for-woocommerce' );
 		}
 		if ( 0 === $e->status ) {
-			return __( 'Gamma could not be reached. Check that this server can make outgoing HTTPS connections.', 'gamma-wallet' );
+			return __( 'Gamma could not be reached. Check that this server can make outgoing HTTPS connections.', 'gamma-wallet-for-woocommerce' );
 		}
 		if ( 429 === $e->status ) {
-			return __( 'Too many requests to Gamma. Try again in a minute.', 'gamma-wallet' );
+			return __( 'Too many requests to Gamma. Try again in a minute.', 'gamma-wallet-for-woocommerce' );
 		}
 		return $e->getMessage();
 	}
 
 	/** What the shop owner reads when the active Gamma service is not a Reward service. */
 	public static function no_reward_service_text(): string {
-		return __( 'Gamma Wallet for WooCommerce works only with a Reward service. Your business has no Reward service active in Gamma, so customers get no reward QR code and store credits are not offered at checkout. Activate a Reward service in Gamma Business.', 'gamma-wallet' );
+		return __( 'Gamma Wallet for WooCommerce works only with a Reward service. Your business has no Reward service active in Gamma, so customers get no reward QR code and store credits are not offered at checkout. Activate a Reward service in Gamma Business.', 'gamma-wallet-for-woocommerce' );
 	}
 
 	// ------------------------------------------------------------------ reminders
@@ -460,7 +460,7 @@ class Gamma_Wallet_Settings {
 		if ( $screen && 'toplevel_page_' . self::PAGE === $screen->id ) {
 			return;
 		}
-		$link       = '<a href="' . esc_url( admin_url( 'admin.php?page=' . self::PAGE ) ) . '">' . esc_html__( 'Gamma Wallet settings', 'gamma-wallet' ) . '</a>';
+		$link       = '<a href="' . esc_url( admin_url( 'admin.php?page=' . self::PAGE ) ) . '">' . esc_html__( 'Gamma Wallet settings', 'gamma-wallet-for-woocommerce' ) . '</a>';
 		$connection = self::connection();
 		if ( '' !== self::token() && $connection && ! empty( $connection['error'] ) ) {
 			echo '<div class="notice notice-error"><p>' . esc_html( $connection['error'] ) . ' ' . wp_kses_post( $link ) . '</p></div>';
@@ -470,7 +470,7 @@ class Gamma_Wallet_Settings {
 			echo '<div class="notice notice-warning"><p>' . esc_html(
 				sprintf(
 					/* translators: %d: days left */
-					__( 'Your Gamma integration token stops working in %d day(s). Create a new one in Gamma Business → Integrations and save it in the settings.', 'gamma-wallet' ),
+					__( 'Your Gamma integration token stops working in %d day(s). Create a new one in Gamma Business → Integrations and save it in the settings.', 'gamma-wallet-for-woocommerce' ),
 					(int) $connection['token']['daysLeft']
 				)
 			) . ' ' . wp_kses_post( $link ) . '</p></div>';

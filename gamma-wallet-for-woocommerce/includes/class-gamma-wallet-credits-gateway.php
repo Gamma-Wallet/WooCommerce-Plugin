@@ -30,8 +30,8 @@ class Gamma_Wallet_Credits_Gateway extends WC_Payment_Gateway {
 		$this->id                 = self::ID;
 		$this->icon               = GAMMA_WALLET_URL . 'assets/images/gamma-mark-64.png';
 		$this->has_fields         = false;
-		$this->method_title       = __( 'Use Store Credits with Gamma', 'gamma-wallet' );
-		$this->method_description = __( 'Customers settle the whole order with the store credits they hold at your shop, by scanning a QR code with Gamma Wallet. The code is valid for 60 seconds. An order settled this way earns no reward.', 'gamma-wallet' );
+		$this->method_title       = __( 'Use Store Credits with Gamma', 'gamma-wallet-for-woocommerce' );
+		$this->method_description = __( 'Customers settle the whole order with the store credits they hold at your shop, by scanning a QR code with Gamma Wallet. The code is valid for 60 seconds. An order settled this way earns no reward.', 'gamma-wallet-for-woocommerce' );
 		$this->supports           = array( 'products' );
 
 		$this->init_form_fields();
@@ -46,23 +46,23 @@ class Gamma_Wallet_Credits_Gateway extends WC_Payment_Gateway {
 	public function init_form_fields(): void {
 		$this->form_fields = array(
 			'enabled'     => array(
-				'title'   => __( 'Turn on', 'gamma-wallet' ),
+				'title'   => __( 'Turn on', 'gamma-wallet-for-woocommerce' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Let customers settle orders with their Gamma store credits', 'gamma-wallet' ),
+				'label'   => __( 'Let customers settle orders with their Gamma store credits', 'gamma-wallet-for-woocommerce' ),
 				'default' => 'no',
 			),
 			'title'       => array(
-				'title'       => __( 'Title', 'gamma-wallet' ),
+				'title'       => __( 'Title', 'gamma-wallet-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'What the customer sees at checkout.', 'gamma-wallet' ),
-				'default'     => __( 'Use Store Credits with Gamma', 'gamma-wallet' ),
+				'description' => __( 'What the customer sees at checkout.', 'gamma-wallet-for-woocommerce' ),
+				'default'     => __( 'Use Store Credits with Gamma', 'gamma-wallet-for-woocommerce' ),
 				'desc_tip'    => true,
 			),
 			'description' => array(
-				'title'       => __( 'Description', 'gamma-wallet' ),
+				'title'       => __( 'Description', 'gamma-wallet-for-woocommerce' ),
 				'type'        => 'textarea',
-				'description' => __( 'Shown under the title at checkout.', 'gamma-wallet' ),
-				'default'     => __( 'After you place the order, scan the QR code with the Gamma Wallet app. The whole order is settled with the store credits you hold at our shop.', 'gamma-wallet' ),
+				'description' => __( 'Shown under the title at checkout.', 'gamma-wallet-for-woocommerce' ),
+				'default'     => __( 'After you place the order, scan the QR code with the Gamma Wallet app. The whole order is settled with the store credits you hold at our shop.', 'gamma-wallet-for-woocommerce' ),
 				'desc_tip'    => true,
 			),
 		);
@@ -88,11 +88,11 @@ class Gamma_Wallet_Credits_Gateway extends WC_Payment_Gateway {
 			self::start_request( $order );
 		} catch ( Gamma_Wallet_Api_Error $e ) {
 			Gamma_Wallet_Api::log( sprintf( 'Store-credit request for order %s failed: %s', $order->get_order_number(), $e->getMessage() ) );
-			wc_add_notice( __( 'Store credits cannot be used right now. Please choose another way to pay, or try again in a moment.', 'gamma-wallet' ), 'error' );
+			wc_add_notice( __( 'Store credits cannot be used right now. Please choose another way to pay, or try again in a moment.', 'gamma-wallet-for-woocommerce' ), 'error' );
 			return array( 'result' => 'failure' );
 		}
 
-		$order->update_status( 'pending', __( 'Waiting for the customer to settle the order with Gamma store credits.', 'gamma-wallet' ) );
+		$order->update_status( 'pending', __( 'Waiting for the customer to settle the order with Gamma store credits.', 'gamma-wallet-for-woocommerce' ) );
 		WC()->cart->empty_cart();
 
 		return array(
@@ -135,7 +135,7 @@ class Gamma_Wallet_Credits_Gateway extends WC_Payment_Gateway {
 		$order->add_order_note(
 			sprintf(
 				/* translators: %s: Gamma request id */
-				__( 'Settled with the customer\'s store credits through Gamma Wallet (request %s).', 'gamma-wallet' ),
+				__( 'Settled with the customer\'s store credits through Gamma Wallet (request %s).', 'gamma-wallet-for-woocommerce' ),
 				$request['requestId'] ?? ''
 			)
 		);

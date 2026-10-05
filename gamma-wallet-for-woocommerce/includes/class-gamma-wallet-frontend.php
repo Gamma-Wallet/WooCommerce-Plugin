@@ -14,7 +14,7 @@ class Gamma_Wallet_Frontend {
 
 	/** The Gamma Wallet wordmark at the top of each box. */
 	private static function logo(): void {
-		echo '<p class="gamma-wallet-logo"><img src="' . esc_url( GAMMA_WALLET_URL . 'assets/images/gamma-logo.png' ) . '" alt="' . esc_attr__( 'Gamma Wallet', 'gamma-wallet' ) . '" height="22"></p>';
+		echo '<p class="gamma-wallet-logo"><img src="' . esc_url( GAMMA_WALLET_URL . 'assets/images/gamma-logo.png' ) . '" alt="' . esc_attr__( 'Gamma Wallet', 'gamma-wallet-for-woocommerce' ) . '" height="22"></p>';
 	}
 
 	public static function init(): void {
@@ -31,14 +31,15 @@ class Gamma_Wallet_Frontend {
 			'gamma-wallet',
 			'gammaWalletText',
 			array(
-				'secondsLeft' => __( '%d s left', 'gamma-wallet' ),
+				/* translators: %d: seconds left before the code expires */
+				'secondsLeft' => __( '%d s left', 'gamma-wallet-for-woocommerce' ),
 				/* translators: %s: minutes and seconds, such as 4:59 */
-				'timeLeft'    => __( '%s left', 'gamma-wallet' ),
-				'expired'     => __( 'This code has expired.', 'gamma-wallet' ),
-				'newCode'     => __( 'Show a new code', 'gamma-wallet' ),
-				'settled'     => __( 'Done! Your order is settled with your store credits.', 'gamma-wallet' ),
-				'claimed'     => __( 'Reward collected. Thank you!', 'gamma-wallet' ),
-				'unavailable' => __( 'Gamma cannot be reached right now. Please try again in a moment.', 'gamma-wallet' ),
+				'timeLeft'    => __( '%s left', 'gamma-wallet-for-woocommerce' ),
+				'expired'     => __( 'This code has expired.', 'gamma-wallet-for-woocommerce' ),
+				'newCode'     => __( 'Show a new code', 'gamma-wallet-for-woocommerce' ),
+				'settled'     => __( 'Done! Your order is settled with your store credits.', 'gamma-wallet-for-woocommerce' ),
+				'claimed'     => __( 'Reward collected. Thank you!', 'gamma-wallet-for-woocommerce' ),
+				'unavailable' => __( 'Gamma cannot be reached right now. Please try again in a moment.', 'gamma-wallet-for-woocommerce' ),
 			)
 		);
 	}
@@ -56,21 +57,21 @@ class Gamma_Wallet_Frontend {
 			<div class="gw-card<?php echo $claimed ? ' gw-is-done' : ''; ?>">
 				<div class="gw-qr-col">
 					<div class="gamma-wallet-qr gw-qr-tile">
-						<img src="<?php echo esc_url( (string) $order->get_meta( Gamma_Wallet_Rewards::META_QR_URL ) ); ?>" width="200" height="200" alt="<?php esc_attr_e( 'Reward QR code', 'gamma-wallet' ); ?>">
+						<img src="<?php echo esc_url( (string) $order->get_meta( Gamma_Wallet_Rewards::META_QR_URL ) ); ?>" width="200" height="200" alt="<?php esc_attr_e( 'Reward QR code', 'gamma-wallet-for-woocommerce' ); ?>">
 					</div>
 					<div class="gw-check" aria-hidden="true">&#10003;</div>
 				</div>
 				<div class="gw-body">
 					<?php self::logo(); ?>
-					<h2 class="gamma-wallet-title"><?php esc_html_e( 'Collect your reward', 'gamma-wallet' ); ?></h2>
-					<p class="gw-lead gw-when-waiting"><?php esc_html_e( 'This order earns you a reward. Add it to your Gamma Wallet in a few seconds.', 'gamma-wallet' ); ?></p>
+					<h2 class="gamma-wallet-title"><?php esc_html_e( 'Collect your reward', 'gamma-wallet-for-woocommerce' ); ?></h2>
+					<p class="gw-lead gw-when-waiting"><?php esc_html_e( 'This order earns you a reward. Add it to your Gamma Wallet in a few seconds.', 'gamma-wallet-for-woocommerce' ); ?></p>
 					<ol class="gw-steps gw-when-waiting">
-						<li><?php esc_html_e( 'Open the Gamma Wallet app', 'gamma-wallet' ); ?></li>
-						<li><?php esc_html_e( 'Scan this code', 'gamma-wallet' ); ?></li>
-						<li><?php esc_html_e( 'The reward is added to your wallet', 'gamma-wallet' ); ?></li>
+						<li><?php esc_html_e( 'Open the Gamma Wallet app', 'gamma-wallet-for-woocommerce' ); ?></li>
+						<li><?php esc_html_e( 'Scan this code', 'gamma-wallet-for-woocommerce' ); ?></li>
+						<li><?php esc_html_e( 'The reward is added to your wallet', 'gamma-wallet-for-woocommerce' ); ?></li>
 					</ol>
-					<a class="gamma-wallet-open gw-button gw-when-waiting" href="<?php echo esc_url( $link ); ?>"><?php esc_html_e( 'On your phone? Open in Gamma Wallet', 'gamma-wallet' ); ?></a>
-					<p class="gamma-wallet-done gw-done"<?php echo $claimed ? '' : ' hidden'; ?>><?php esc_html_e( 'Reward collected. Thank you!', 'gamma-wallet' ); ?></p>
+					<a class="gamma-wallet-open gw-button gw-when-waiting" href="<?php echo esc_url( $link ); ?>"><?php esc_html_e( 'On your phone? Open in Gamma Wallet', 'gamma-wallet-for-woocommerce' ); ?></a>
+					<p class="gamma-wallet-done gw-done"<?php echo $claimed ? '' : ' hidden'; ?>><?php esc_html_e( 'Reward collected. Thank you!', 'gamma-wallet-for-woocommerce' ); ?></p>
 				</div>
 			</div>
 		</section>
@@ -78,11 +79,11 @@ class Gamma_Wallet_Frontend {
 	}
 
 	public static function reward_after_payment_note(): void {
-		echo '<p class="gamma-wallet-note">' . esc_html__( 'This order earns a Gamma Wallet reward. Once your payment is received, we will email you a QR code to collect it.', 'gamma-wallet' ) . '</p>';
+		echo '<p class="gamma-wallet-note">' . esc_html__( 'This order earns a Gamma Wallet reward. Once your payment is received, we will email you a QR code to collect it.', 'gamma-wallet-for-woocommerce' ) . '</p>';
 	}
 
 	public static function reward_later_note(): void {
-		echo '<p class="gamma-wallet-note">' . esc_html__( 'As soon as your payment is confirmed, you will receive a QR code by email to collect your reward with Gamma Wallet.', 'gamma-wallet' ) . '</p>';
+		echo '<p class="gamma-wallet-note">' . esc_html__( 'As soon as your payment is confirmed, you will receive a QR code by email to collect your reward with Gamma Wallet.', 'gamma-wallet-for-woocommerce' ) . '</p>';
 	}
 
 	/** The store-credit QR code, with the countdown, for an order not settled yet. */
@@ -97,7 +98,7 @@ class Gamma_Wallet_Frontend {
 			<div class="gw-card">
 				<div class="gw-qr-col">
 					<div class="gamma-wallet-qr gw-qr-tile">
-						<img class="gamma-wallet-qr-img" src="<?php echo esc_attr( $qr ? 'data:image/png;base64,' . $qr : '' ); ?>" width="220" height="220" alt="<?php esc_attr_e( 'Store-credit QR code', 'gamma-wallet' ); ?>"<?php echo $qr && $seconds > 0 ? '' : ' hidden'; ?>>
+						<img class="gamma-wallet-qr-img" src="<?php echo esc_attr( $qr ? 'data:image/png;base64,' . $qr : '' ); ?>" width="220" height="220" alt="<?php esc_attr_e( 'Store-credit QR code', 'gamma-wallet-for-woocommerce' ); ?>"<?php echo $qr && $seconds > 0 ? '' : ' hidden'; ?>>
 					</div>
 					<div class="gw-timer" aria-hidden="true"><span class="gw-timer-bar"></span></div>
 					<p class="gamma-wallet-countdown gw-countdown" aria-live="polite"></p>
@@ -105,23 +106,23 @@ class Gamma_Wallet_Frontend {
 				</div>
 				<div class="gw-body">
 					<?php self::logo(); ?>
-					<h2 class="gamma-wallet-title"><?php esc_html_e( 'Use your store credits', 'gamma-wallet' ); ?></h2>
+					<h2 class="gamma-wallet-title"><?php esc_html_e( 'Use your store credits', 'gamma-wallet-for-woocommerce' ); ?></h2>
 					<p class="gw-lead">
 						<?php
 						printf(
 							/* translators: %s: order total */
-							esc_html__( 'Settle the whole order (%s) with the store credits you hold at our shop.', 'gamma-wallet' ),
+							esc_html__( 'Settle the whole order (%s) with the store credits you hold at our shop.', 'gamma-wallet-for-woocommerce' ),
 							'<strong>' . wp_kses_post( $order->get_formatted_order_total() ) . '</strong>'
 						);
 						?>
 					</p>
 					<ol class="gw-steps gw-when-waiting">
-						<li><?php esc_html_e( 'Open the Gamma Wallet app', 'gamma-wallet' ); ?></li>
-						<li><?php esc_html_e( 'Scan this code before the time runs out', 'gamma-wallet' ); ?></li>
-						<li><?php esc_html_e( 'Confirm, and this page updates by itself', 'gamma-wallet' ); ?></li>
+						<li><?php esc_html_e( 'Open the Gamma Wallet app', 'gamma-wallet-for-woocommerce' ); ?></li>
+						<li><?php esc_html_e( 'Scan this code before the time runs out', 'gamma-wallet-for-woocommerce' ); ?></li>
+						<li><?php esc_html_e( 'Confirm, and this page updates by itself', 'gamma-wallet-for-woocommerce' ); ?></li>
 					</ol>
-					<a class="gamma-wallet-open gw-button gw-when-waiting" href="<?php echo esc_url( $link ); ?>"><?php esc_html_e( 'On your phone? Open in Gamma Wallet', 'gamma-wallet' ); ?></a>
-					<button type="button" class="gamma-wallet-new-code gw-button" hidden><?php esc_html_e( 'Show a new code', 'gamma-wallet' ); ?></button>
+					<a class="gamma-wallet-open gw-button gw-when-waiting" href="<?php echo esc_url( $link ); ?>"><?php esc_html_e( 'On your phone? Open in Gamma Wallet', 'gamma-wallet-for-woocommerce' ); ?></a>
+					<button type="button" class="gamma-wallet-new-code gw-button" hidden><?php esc_html_e( 'Show a new code', 'gamma-wallet-for-woocommerce' ); ?></button>
 					<p class="gamma-wallet-done gw-done" hidden></p>
 				</div>
 			</div>
@@ -130,6 +131,6 @@ class Gamma_Wallet_Frontend {
 	}
 
 	public static function credit_settled_note(): void {
-		echo '<p class="gamma-wallet-note gamma-wallet-done">' . esc_html__( 'Your order is settled with your store credits through Gamma Wallet.', 'gamma-wallet' ) . '</p>';
+		echo '<p class="gamma-wallet-note gamma-wallet-done">' . esc_html__( 'Your order is settled with your store credits through Gamma Wallet.', 'gamma-wallet-for-woocommerce' ) . '</p>';
 	}
 }

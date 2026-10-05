@@ -4,11 +4,11 @@ Tags: loyalty, rewards, store credit, qr code, woocommerce
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Your customers earn a reward for every paid order, and can settle an order with the store credits they hold at your shop, by scanning a QR code with Gamma Wallet.
+Customers earn a reward for every paid order and can settle orders with their store credits, by scanning a QR code with Gamma Wallet.
 
 == Description ==
 
@@ -78,6 +78,11 @@ The customer presses "Show a new code" on the same page. The order waits, unpaid
 Yes, with both the block-based and the classic checkout, and with High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.0.3 =
+* Fix: order totals with cents (such as 12.80) are now sent to Gamma exactly. On servers whose PHP sets serialize_precision to 17, the total was sent as 12.800000000000001 and settling such an order with store credits failed.
+* The "new code" button completes the order when the customer settled the previous code a moment before.
+* The store-credit countdown follows the code's real validity.
 
 = 1.0.2 =
 * Works only while the business has a Reward service active in Gamma: otherwise no reward QR code is given and store credits are not offered at checkout. The settings page and an admin notice say so. The check is repeated every hour.

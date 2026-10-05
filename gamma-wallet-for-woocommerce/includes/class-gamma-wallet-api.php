@@ -87,13 +87,14 @@ class Gamma_Wallet_Api {
 			// Amounts written exactly (0.8, never 0.80000000000000004): with serialize_precision = 17,
 			// which many hosts still set, Gamma would sign a total the customer's app does not match.
 			$precision = ini_get( 'serialize_precision' );
-			ini_set( 'serialize_precision', '-1' );
+			ini_set( 'serialize_precision', '-1' ); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- restored two lines below.
 			$args['body'] = wp_json_encode( $body, JSON_PRESERVE_ZERO_FRACTION );
-			ini_set( 'serialize_precision', $precision );
+			ini_set( 'serialize_precision', $precision ); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- restores the host's value.
 		}
 
 		$response = wp_remote_request( rtrim( GAMMA_WALLET_API_URL, '/' ) . $path, $args );
 		if ( is_wp_error( $response ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- never printed raw: logged, or escaped with esc_html() where shown.
 			throw new Gamma_Wallet_Api_Error( 0, null, 'Gamma could not be reached: ' . $response->get_error_message() );
 		}
 
@@ -103,6 +104,7 @@ class Gamma_Wallet_Api {
 			return $envelope['result'];
 		}
 		$error = is_array( $envelope['error'] ?? null ) ? $envelope['error'] : array();
+		// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- never printed raw: logged, or escaped with esc_html() where shown.
 		throw new Gamma_Wallet_Api_Error( $status, $error['identifier'] ?? null, $error['message'] ?? null );
 	}
 

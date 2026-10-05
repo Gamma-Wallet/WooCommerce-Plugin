@@ -113,7 +113,7 @@ class Gamma_Wallet_Rewards {
 			return false;
 		}
 		if ( ! Gamma_Wallet_Settings::currency_matches() ) {
-			self::fail( $order, __( 'Not sent to Gamma Wallet: the order currency is not the currency of your Gamma business.', 'gamma-wallet' ), false );
+			self::fail( $order, __( 'Not sent to Gamma Wallet: the order currency is not the currency of your Gamma business.', 'gamma-wallet-for-woocommerce' ), false );
 			return false;
 		}
 		$api = Gamma_Wallet_Api::from_settings();
@@ -144,7 +144,7 @@ class Gamma_Wallet_Rewards {
 		$order->update_meta_data( self::META_QR_URL, $bill['qrImageUrl'] );
 		$order->update_meta_data( self::META_STATUS, $bill['status'] );
 		$order->delete_meta_data( self::META_ERROR );
-		$order->add_order_note( __( 'Sent to Gamma Wallet. The customer can collect the reward for this order with its QR code.', 'gamma-wallet' ) );
+		$order->add_order_note( __( 'Sent to Gamma Wallet. The customer can collect the reward for this order with its QR code.', 'gamma-wallet-for-woocommerce' ) );
 		$order->save();
 		if ( 'Claimed' === $bill['status'] ) {
 			self::mark_claimed( $order, $bill['claimedOn'] ?? null );
@@ -191,7 +191,7 @@ class Gamma_Wallet_Rewards {
 	private static function mark_claimed( WC_Order $order, ?string $claimed_on ): void {
 		$order->update_meta_data( self::META_STATUS, 'Claimed' );
 		$order->update_meta_data( self::META_CLAIMED_ON, $claimed_on );
-		$order->add_order_note( __( 'The customer collected the reward for this order in Gamma Wallet.', 'gamma-wallet' ) );
+		$order->add_order_note( __( 'The customer collected the reward for this order in Gamma Wallet.', 'gamma-wallet-for-woocommerce' ) );
 		$order->save();
 	}
 
@@ -241,17 +241,17 @@ class Gamma_Wallet_Rewards {
 		$qr_url = (string) $order->get_meta( self::META_QR_URL );
 
 		if ( $plain_text ) {
-			echo "\n" . esc_html__( 'Collect your reward with Gamma Wallet', 'gamma-wallet' ) . "\n";
-			echo esc_html__( 'Open this link on the phone where Gamma Wallet is installed:', 'gamma-wallet' ) . "\n" . esc_url_raw( $link ) . "\n\n";
+			echo "\n" . esc_html__( 'Collect your reward with Gamma Wallet', 'gamma-wallet-for-woocommerce' ) . "\n";
+			echo esc_html__( 'Open this link on the phone where Gamma Wallet is installed:', 'gamma-wallet-for-woocommerce' ) . "\n" . esc_url_raw( $link ) . "\n\n";
 			return;
 		}
 		?>
 		<div style="margin:0 0 32px;padding:16px;border:1px solid #e5e5e5;border-radius:8px;text-align:center">
-			<p style="margin:0 0 12px"><img src="<?php echo esc_url( GAMMA_WALLET_URL . 'assets/images/gamma-logo.png' ); ?>" alt="<?php esc_attr_e( 'Gamma Wallet', 'gamma-wallet' ); ?>" width="110" height="33" style="display:inline-block;width:110px;height:auto"></p>
-			<h2 style="margin:0 0 8px"><?php esc_html_e( 'Collect your reward with Gamma Wallet', 'gamma-wallet' ); ?></h2>
-			<p style="margin:0 0 12px"><?php esc_html_e( 'Scan this code with the Gamma Wallet app to add the reward for this order to your wallet.', 'gamma-wallet' ); ?></p>
-			<p style="margin:0 0 12px"><img src="<?php echo esc_url( $qr_url ); ?>" width="200" height="200" alt="<?php esc_attr_e( 'Reward QR code', 'gamma-wallet' ); ?>" style="display:inline-block"></p>
-			<p style="margin:0"><a href="<?php echo esc_url( $link ); ?>"><?php esc_html_e( 'On your phone? Open it in Gamma Wallet', 'gamma-wallet' ); ?></a></p>
+			<p style="margin:0 0 12px"><img src="<?php echo esc_url( GAMMA_WALLET_URL . 'assets/images/gamma-logo.png' ); ?>" alt="<?php esc_attr_e( 'Gamma Wallet', 'gamma-wallet-for-woocommerce' ); ?>" width="110" height="33" style="display:inline-block;width:110px;height:auto"></p>
+			<h2 style="margin:0 0 8px"><?php esc_html_e( 'Collect your reward with Gamma Wallet', 'gamma-wallet-for-woocommerce' ); ?></h2>
+			<p style="margin:0 0 12px"><?php esc_html_e( 'Scan this code with the Gamma Wallet app to add the reward for this order to your wallet.', 'gamma-wallet-for-woocommerce' ); ?></p>
+			<p style="margin:0 0 12px"><img src="<?php echo esc_url( $qr_url ); ?>" width="200" height="200" alt="<?php esc_attr_e( 'Reward QR code', 'gamma-wallet-for-woocommerce' ); ?>" style="display:inline-block"></p>
+			<p style="margin:0"><a href="<?php echo esc_url( $link ); ?>"><?php esc_html_e( 'On your phone? Open it in Gamma Wallet', 'gamma-wallet-for-woocommerce' ); ?></a></p>
 		</div>
 		<?php
 	}
@@ -262,7 +262,7 @@ class Gamma_Wallet_Rewards {
 		$order = $order instanceof WC_Order ? $order : ( isset( $GLOBALS['theorder'] ) ? $GLOBALS['theorder'] : null );
 		if ( $order instanceof WC_Order && $order->get_billing_email() && ( $order->get_meta( self::META_BILL_ID ) || self::qualifies( $order ) )
 			&& 'Claimed' !== $order->get_meta( self::META_STATUS ) ) {
-			$actions['gamma_wallet_send_reward'] = __( 'Send the Gamma reward QR code to the customer', 'gamma-wallet' );
+			$actions['gamma_wallet_send_reward'] = __( 'Send the Gamma reward QR code to the customer', 'gamma-wallet-for-woocommerce' );
 		}
 		return (array) $actions;
 	}
@@ -273,13 +273,13 @@ class Gamma_Wallet_Rewards {
 	 */
 	public static function send_reward_email( WC_Order $order ): void {
 		if ( ! self::ensure_bill( $order ) ) {
-			$order->add_order_note( __( 'The Gamma reward QR code could not be sent: the order is not eligible for a reward yet, or Gamma could not be reached.', 'gamma-wallet' ) );
+			$order->add_order_note( __( 'The Gamma reward QR code could not be sent: the order is not eligible for a reward yet, or Gamma could not be reached.', 'gamma-wallet-for-woocommerce' ) );
 			return;
 		}
 		$mailer  = WC()->mailer();
 		$subject = sprintf(
 			/* translators: 1: shop name, 2: order number */
-			__( 'Your reward from %1$s (order %2$s)', 'gamma-wallet' ),
+			__( 'Your reward from %1$s (order %2$s)', 'gamma-wallet-for-woocommerce' ),
 			wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
 			$order->get_order_number()
 		);
@@ -287,13 +287,13 @@ class Gamma_Wallet_Rewards {
 		echo '<p>' . esc_html(
 			sprintf(
 				/* translators: %s: customer first name */
-				__( 'Hi %s,', 'gamma-wallet' ),
-				$order->get_billing_first_name() ? $order->get_billing_first_name() : __( 'there', 'gamma-wallet' )
+				__( 'Hi %s,', 'gamma-wallet-for-woocommerce' ),
+				$order->get_billing_first_name() ? $order->get_billing_first_name() : __( 'there', 'gamma-wallet-for-woocommerce' )
 			)
 		) . '</p>';
-		echo '<p>' . esc_html__( 'Thank you, we have received your payment. Your order earned a reward: scan the code below with the Gamma Wallet app to add it to your wallet.', 'gamma-wallet' ) . '</p>';
+		echo '<p>' . esc_html__( 'Thank you, we have received your payment. Your order earned a reward: scan the code below with the Gamma Wallet app to add it to your wallet.', 'gamma-wallet-for-woocommerce' ) . '</p>';
 		self::email_section( $order, false );
-		$body = $mailer->wrap_message( __( 'Your reward is ready', 'gamma-wallet' ), ob_get_clean() );
+		$body = $mailer->wrap_message( __( 'Your reward is ready', 'gamma-wallet-for-woocommerce' ), ob_get_clean() );
 
 		$sent = $mailer->send( $order->get_billing_email(), $subject, $body );
 		if ( $sent ) {
@@ -304,10 +304,10 @@ class Gamma_Wallet_Rewards {
 			$sent
 				? sprintf(
 					/* translators: %s: email address */
-					__( 'Gamma reward QR code sent to %s.', 'gamma-wallet' ),
+					__( 'Gamma reward QR code sent to %s.', 'gamma-wallet-for-woocommerce' ),
 					$order->get_billing_email()
 				)
-				: __( 'The Gamma reward QR code email could not be sent. Check that this site can send email.', 'gamma-wallet' )
+				: __( 'The Gamma reward QR code email could not be sent. Check that this site can send email.', 'gamma-wallet-for-woocommerce' )
 		);
 	}
 
@@ -317,7 +317,7 @@ class Gamma_Wallet_Rewards {
 		$screen = class_exists( \Automattic\WooCommerce\Utilities\OrderUtil::class ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled()
 			? wc_get_page_screen_id( 'shop-order' )
 			: 'shop_order';
-		add_meta_box( 'gamma-wallet', __( 'Gamma Wallet', 'gamma-wallet' ), array( __CLASS__, 'render_meta_box' ), $screen, 'side', 'default' );
+		add_meta_box( 'gamma-wallet', __( 'Gamma Wallet', 'gamma-wallet-for-woocommerce' ), array( __CLASS__, 'render_meta_box' ), $screen, 'side', 'default' );
 	}
 
 	public static function render_meta_box( $post_or_order ): void {
@@ -328,12 +328,12 @@ class Gamma_Wallet_Rewards {
 		if ( Gamma_Wallet_Credits_Gateway::ID === $order->get_payment_method() ) {
 			$request = (string) $order->get_meta( Gamma_Wallet_Credits_Gateway::META_REQUEST_ID );
 			echo '<p>' . ( $order->is_paid()
-				? esc_html__( 'Settled with store credits through Gamma Wallet.', 'gamma-wallet' )
-				: esc_html__( 'Waiting for the customer to settle it with store credits.', 'gamma-wallet' ) ) . '</p>';
+				? esc_html__( 'Settled with store credits through Gamma Wallet.', 'gamma-wallet-for-woocommerce' )
+				: esc_html__( 'Waiting for the customer to settle it with store credits.', 'gamma-wallet-for-woocommerce' ) ) . '</p>';
 			if ( $request ) {
-				echo '<p class="description">' . esc_html__( 'Request', 'gamma-wallet' ) . ': <code>' . esc_html( $request ) . '</code></p>';
+				echo '<p class="description">' . esc_html__( 'Request', 'gamma-wallet-for-woocommerce' ) . ': <code>' . esc_html( $request ) . '</code></p>';
 			}
-			echo '<p class="description">' . esc_html__( 'No reward is given for an order settled with store credits.', 'gamma-wallet' ) . '</p>';
+			echo '<p class="description">' . esc_html__( 'No reward is given for an order settled with store credits.', 'gamma-wallet-for-woocommerce' ) . '</p>';
 			return;
 		}
 		$bill_id = (string) $order->get_meta( self::META_BILL_ID );
@@ -342,19 +342,19 @@ class Gamma_Wallet_Rewards {
 			if ( $error ) {
 				echo '<p>' . esc_html( $error ) . '</p>';
 			} elseif ( ! Gamma_Wallet_Settings::reward_service_active() ) {
-				echo '<p>' . esc_html__( 'No reward: your business has no Reward service active in Gamma.', 'gamma-wallet' ) . '</p>';
+				echo '<p>' . esc_html__( 'No reward: your business has no Reward service active in Gamma.', 'gamma-wallet-for-woocommerce' ) . '</p>';
 			} elseif ( ! self::may_earn( $order ) ) {
-				echo '<p>' . esc_html__( 'This order earns no reward (its payment method does not earn one).', 'gamma-wallet' ) . '</p>';
+				echo '<p>' . esc_html__( 'This order earns no reward (its payment method does not earn one).', 'gamma-wallet-for-woocommerce' ) . '</p>';
 			} elseif ( Gamma_Wallet_Settings::is_pay_later( (string) $order->get_payment_method() ) ) {
-				echo '<p>' . esc_html__( 'Paid later: when you mark the order Completed, the reward QR code is created and the customer receives it in an email of its own.', 'gamma-wallet' ) . '</p>';
+				echo '<p>' . esc_html__( 'Paid later: when you mark the order Completed, the reward QR code is created and the customer receives it in an email of its own.', 'gamma-wallet-for-woocommerce' ) . '</p>';
 			} else {
-				echo '<p>' . esc_html__( 'Not sent to Gamma Wallet yet. It is sent when the payment is confirmed.', 'gamma-wallet' ) . '</p>';
+				echo '<p>' . esc_html__( 'Not sent to Gamma Wallet yet. It is sent when the payment is confirmed.', 'gamma-wallet-for-woocommerce' ) . '</p>';
 			}
 			return;
 		}
 		$claimed = 'Claimed' === $order->get_meta( self::META_STATUS );
-		echo '<p><strong>' . ( $claimed ? esc_html__( 'Reward collected', 'gamma-wallet' ) : esc_html__( 'Waiting for the customer to collect the reward', 'gamma-wallet' ) ) . '</strong></p>';
+		echo '<p><strong>' . ( $claimed ? esc_html__( 'Reward collected', 'gamma-wallet-for-woocommerce' ) : esc_html__( 'Waiting for the customer to collect the reward', 'gamma-wallet-for-woocommerce' ) ) . '</strong></p>';
 		echo '<p><img src="' . esc_url( (string) $order->get_meta( self::META_QR_URL ) ) . '" width="120" height="120" alt=""></p>';
-		echo '<p class="description">' . esc_html__( 'Bill', 'gamma-wallet' ) . ': <code>' . esc_html( $bill_id ) . '</code></p>';
+		echo '<p class="description">' . esc_html__( 'Bill', 'gamma-wallet-for-woocommerce' ) . ': <code>' . esc_html( $bill_id ) . '</code></p>';
 	}
 }

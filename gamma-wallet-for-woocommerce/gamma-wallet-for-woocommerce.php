@@ -3,15 +3,14 @@
  * Plugin Name:       Gamma Wallet for WooCommerce
  * Plugin URI:        https://www.gamma-wallet.com
  * Description:       Lets your customers earn a reward for every paid order, and settle an order with the store credits they hold at your shop, by scanning a QR code with Gamma Wallet.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Requires at least: 6.3
  * Requires PHP:      8.1
  * Author:            Gamma Wallet
  * Author URI:        https://www.gamma-wallet.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       gamma-wallet
- * Domain Path:       /languages
+ * Text Domain:       gamma-wallet-for-woocommerce
  * WC requires at least: 8.0
  * WC tested up to:   11.1
  *
@@ -20,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'GAMMA_WALLET_VERSION', '1.0.2' );
+define( 'GAMMA_WALLET_VERSION', '1.0.3' );
 define( 'GAMMA_WALLET_FILE', __FILE__ );
 define( 'GAMMA_WALLET_DIR', plugin_dir_path( __FILE__ ) );
 define( 'GAMMA_WALLET_URL', plugin_dir_url( __FILE__ ) );
@@ -47,13 +46,11 @@ add_action(
 add_action(
 	'plugins_loaded',
 	static function () {
-		load_plugin_textdomain( 'gamma-wallet', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			add_action(
 				'admin_notices',
 				static function () {
-					echo '<div class="notice notice-error"><p>' . esc_html__( 'Gamma Wallet for WooCommerce needs WooCommerce to be installed and active.', 'gamma-wallet' ) . '</p></div>';
+					echo '<div class="notice notice-error"><p>' . esc_html__( 'Gamma Wallet for WooCommerce needs WooCommerce to be installed and active.', 'gamma-wallet-for-woocommerce' ) . '</p></div>';
 				}
 			);
 			return;
@@ -114,7 +111,7 @@ add_filter(
 add_filter(
 	'plugin_action_links_' . plugin_basename( __FILE__ ),
 	static function ( $links ) {
-		array_unshift( $links, '<a href="' . esc_url( admin_url( 'admin.php?page=gamma-wallet' ) ) . '">' . esc_html__( 'Settings', 'gamma-wallet' ) . '</a>' );
+		array_unshift( $links, '<a href="' . esc_url( admin_url( 'admin.php?page=gamma-wallet' ) ) . '">' . esc_html__( 'Settings', 'gamma-wallet-for-woocommerce' ) . '</a>' );
 		return $links;
 	}
 );
