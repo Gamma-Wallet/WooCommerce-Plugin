@@ -157,6 +157,29 @@ class Gamma_Wallet_Rest {
 			return self::reply( array( 'error' => 'not_payable' ), 409 );
 		}
 
+		// The customer may have settled the current code a moment ago, before this page asked
+		// Gamma. Ask first, so a settled order is completed instead of getting a new code.
+		$current = (string) $order->get_meta( Gamma_Wallet_Credits_Gateway::META_REQUEST );
+		$api     = Gamma_Wallet_Api::from_settings();
+		if ( '' !== $current && $api ) {
+			try {
+				$checked = $api->check_credit( $current );
+			} catch ( Gamma_Wallet_Api_Error $e ) {
+				Gamma_Wallet_Api::log( sprintf( 'Checking the store-credit code of order %s failed: %s', $order->get_order_number(), $e->getMessage() ) );
+				return self::reply( array( 'error' => 'unavailable' ), 503 );
+			}
+			if ( 'Paid' === $checked['status'] ) {
+				Gamma_Wallet_Credits_Gateway::mark_settled( $order, $checked );
+				delete_transient( 'gamma_wallet_status_' . $order->get_id() );
+				return self::reply(
+					array(
+						'status'   => 'Paid',
+						'redirect' => $order->get_checkout_order_received_url(),
+					)
+				);
+			}
+		}
+
 		// Never two live codes for one order, or the customer could settle it twice. Gamma still
 		// accepts a code a few seconds past its time (clock differences), so wait those out too.
 		$expires = strtotime( (string) $order->get_meta( Gamma_Wallet_Credits_Gateway::META_EXPIRES_ON ) );
