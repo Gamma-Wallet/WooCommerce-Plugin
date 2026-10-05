@@ -84,7 +84,12 @@ class Gamma_Wallet_Api {
 		);
 		if ( null !== $body ) {
 			$args['headers']['Content-Type'] = 'application/json';
-			$args['body']                    = wp_json_encode( $body, JSON_PRESERVE_ZERO_FRACTION );
+			// Amounts written exactly (0.8, never 0.80000000000000004): with serialize_precision = 17,
+			// which many hosts still set, Gamma would sign a total the customer's app does not match.
+			$precision = ini_get( 'serialize_precision' );
+			ini_set( 'serialize_precision', '-1' );
+			$args['body'] = wp_json_encode( $body, JSON_PRESERVE_ZERO_FRACTION );
+			ini_set( 'serialize_precision', $precision );
 		}
 
 		$response = wp_remote_request( rtrim( GAMMA_WALLET_API_URL, '/' ) . $path, $args );
