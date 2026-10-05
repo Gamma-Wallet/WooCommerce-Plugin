@@ -68,9 +68,12 @@ class Gamma_Wallet_Credits_Gateway extends WC_Payment_Gateway {
 		);
 	}
 
-	/** Offered only when the shop is connected, sells in the business's currency, and there is something to settle. */
+	/**
+	 * Offered only when the shop is connected, the business has a Reward service active, the shop
+	 * sells in the business's currency, and there is something to settle.
+	 */
 	public function is_available() {
-		if ( ! parent::is_available() || '' === Gamma_Wallet_Settings::token() || ! Gamma_Wallet_Settings::currency_matches() ) {
+		if ( ! parent::is_available() || ! Gamma_Wallet_Settings::reward_service_active() || ! Gamma_Wallet_Settings::currency_matches() ) {
 			return false;
 		}
 		if ( WC()->cart && ! is_admin() && (float) WC()->cart->get_total( 'edit' ) <= 0 ) {

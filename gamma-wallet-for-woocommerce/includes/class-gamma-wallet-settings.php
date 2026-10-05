@@ -33,17 +33,46 @@ class Gamma_Wallet_Settings {
 		add_action( 'admin_post_gamma_wallet_test', array( __CLASS__, 'test' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'notices' ) );
 		add_action( 'admin_init', array( __CLASS__, 'refresh_if_stale' ) );
+		add_action( self::REFRESH_HOOK, array( __CLASS__, 'check_connection' ) );
 	}
 
-	/** Re-checks the connection twice a day while someone uses the administration, so the expiry reminder stays true. */
+	const REFRESH_HOOK = 'gamma_wallet_refresh_connection';
+
+	/** True when the last connection check is older than an hour (or there is none). */
+	private static function is_stale(): bool {
+		$connection = self::connection();
+		return ! $connection || (int) ( $connection['checkedOn'] ?? 0 ) < time() - HOUR_IN_SECONDS;
+	}
+
+	/**
+	 * Re-checks the connection every hour while someone uses the administration, so the expiry
+	 * reminder and the Reward-service check stay true.
+	 */
 	public static function refresh_if_stale(): void {
 		if ( wp_doing_ajax() || '' === self::token() || ! current_user_can( 'manage_woocommerce' ) ) {
 			return;
 		}
-		$connection = self::connection();
-		if ( ! $connection || (int) ( $connection['checkedOn'] ?? 0 ) < time() - 12 * HOUR_IN_SECONDS ) {
+		if ( self::is_stale() ) {
 			self::check_connection();
 		}
+	}
+
+	/**
+	 * True while the business's active Gamma service is a Reward service: the only kind whose
+	 * rewards customers can collect. The plugin does nothing for customers otherwise.
+	 *
+	 * Uses the last check; when that is over an hour old, a fresh one is queued in the
+	 * background, so a customer's checkout never waits for Gamma.
+	 */
+	public static function reward_service_active(): bool {
+		if ( '' === self::token() ) {
+			return false;
+		}
+		if ( self::is_stale() && function_exists( 'as_enqueue_async_action' ) && ! as_has_scheduled_action( self::REFRESH_HOOK ) ) {
+			as_enqueue_async_action( self::REFRESH_HOOK, array(), 'gamma-wallet' );
+		}
+		$connection = self::connection();
+		return ! empty( $connection['canClaim'] );
 	}
 
 	// ------------------------------------------------------------------ reading the settings
@@ -276,7 +305,7 @@ class Gamma_Wallet_Settings {
 				(int) $days
 			);
 			if ( empty( $connection['canClaim'] ) ) {
-				echo '<br><span style="color:#996800">' . esc_html__( 'Your business has no reward programme running in Gamma, so customers cannot collect rewards yet.', 'gamma-wallet' ) . '</span>';
+				echo '<br><span style="color:#b32d2e">' . esc_html( self::no_reward_service_text() ) . '</span>';
 			}
 			if ( ! self::currency_matches() ) {
 				echo '<br><span style="color:#b32d2e">' . esc_html(
@@ -385,6 +414,11 @@ class Gamma_Wallet_Settings {
 				'error'     => self::explain( $e ),
 				'checkedOn' => time(),
 			);
+			// Gamma briefly out of reach: keep what it said last time, so the shop keeps working.
+			$previous = self::connection();
+			if ( $e->is_retryable() && $previous && isset( $previous['canClaim'] ) ) {
+				$connection['canClaim'] = $previous['canClaim'];
+			}
 		}
 		update_option( self::CONNECTION_OPTION, $connection, false );
 		return $connection;
@@ -411,6 +445,11 @@ class Gamma_Wallet_Settings {
 		return $e->getMessage();
 	}
 
+	/** What the shop owner reads when the active Gamma service is not a Reward service. */
+	public static function no_reward_service_text(): string {
+		return __( 'Gamma Wallet for WooCommerce works only with a Reward service. Your business has no Reward service active in Gamma, so customers get no reward QR code and store credits are not offered at checkout. Activate a Reward service in Gamma Business.', 'gamma-wallet' );
+	}
+
 	// ------------------------------------------------------------------ reminders
 
 	public static function notices(): void {
@@ -425,6 +464,8 @@ class Gamma_Wallet_Settings {
 		$connection = self::connection();
 		if ( '' !== self::token() && $connection && ! empty( $connection['error'] ) ) {
 			echo '<div class="notice notice-error"><p>' . esc_html( $connection['error'] ) . ' ' . wp_kses_post( $link ) . '</p></div>';
+		} elseif ( '' !== self::token() && $connection && empty( $connection['canClaim'] ) ) {
+			echo '<div class="notice notice-error"><p>' . esc_html( self::no_reward_service_text() ) . ' ' . wp_kses_post( $link ) . '</p></div>';
 		} elseif ( $connection && isset( $connection['token']['daysLeft'] ) && (int) $connection['token']['daysLeft'] < 14 ) {
 			echo '<div class="notice notice-warning"><p>' . esc_html(
 				sprintf(

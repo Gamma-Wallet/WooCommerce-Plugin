@@ -31,7 +31,7 @@ This guide is for shop owners. No coding is needed. If you want to connect your 
 
 | | |
 |---|---|
-| A Gamma Business account | [Register](https://business.gamma-wallet.com) and start on the free tier. Set up the reward programme you want your customers to earn: the plugin uses the one you have active. |
+| A Gamma Business account with a **Reward** service active | [Register](https://business.gamma-wallet.com) and start on the free tier, then activate a Reward service. The plugin works only with a Reward service: while another kind of service is active (a membership or a discount card, for example), customers get no reward QR code and store credits are not offered at checkout. |
 | WooCommerce | Version 8.0 or newer, on WordPress 6.3 or newer |
 | PHP | Version 8.1 or newer. Your hosting provider can tell you which version you have. |
 | The same currency | Your shop must sell in the same currency as your Gamma business (for example EUR in both). |
@@ -65,7 +65,7 @@ Keep the token private, like a password. Anyone who has it can create rewards fo
 2. Paste the token into **Integration token**.
 3. Click **Save and check the connection**.
 
-Under **Status** you should now see **✓ Connected**, your business name, your currency and how many days the token has left.
+Under **Status** you should now see **✓ Connected**, your business name, your currency and how many days the token has left. If a red line says your business has no Reward service active, activate one in Gamma Business, then click **Check again**.
 
 ![The Gamma Wallet settings page](images/settings.png)
 
@@ -89,7 +89,7 @@ The rule behind the tick boxes is simple: **a reward is given only for money you
 
 Online payment methods are ticked by default. Cash on delivery, bank transfer and cheque are not; tick them if you want those orders to earn a reward once they are paid.
 
-The reward the customer receives follows the reward programme you have set up in Gamma Business. You don't set amounts in WooCommerce.
+The reward the customer receives follows the Reward service you have active in Gamma Business. You don't set amounts in WooCommerce.
 
 ## 6. Turn on store credits at checkout
 
@@ -103,7 +103,7 @@ Customers now see it as a payment option at checkout:
 Good to know:
 
 - Store credits always cover the **whole** order. A customer who doesn't hold enough credits at your shop can't complete it with their credits and chooses another payment method instead.
-- The option is shown only when your shop is connected, the currency matches and the order total is above zero.
+- The option is shown only when your shop is connected, your business has a Reward service active, the currency matches and the order total is above zero.
 - An order settled with store credits doesn't earn a new reward.
 
 ## 7. What your customers see
@@ -189,9 +189,10 @@ Deactivating it stops new rewards and hides the store credits option. Rewards al
 | What you see | What to do |
 |---|---|
 | **Status** says the token is not valid, expired or disabled | Create a new token in Gamma Business → Integrations and paste it in. |
+| *… works only with a Reward service* | Your active service in Gamma is not a Reward service. Activate a Reward service in Gamma Business. The plugin checks again every hour; click **Check again** on the Gamma Wallet page to see the change at once. |
 | *Your shop sells in … but your Gamma business uses …* | Your WooCommerce currency (*WooCommerce → Settings → General*) must be the same as your Gamma business currency. |
-| *Use Store Credits with Gamma* is missing at checkout | Check that it is turned on under *WooCommerce → Settings → Payments*, that **Status** shows *Connected*, that the currencies match and that the total is above zero. |
-| An order has no reward | Check that the payment method is ticked, that **Rewards** is on, and, for cash on delivery, that the order is marked **Completed**. The order's Gamma Wallet box gives the reason. |
+| *Use Store Credits with Gamma* is missing at checkout | Check that it is turned on under *WooCommerce → Settings → Payments*, that **Status** shows *Connected* with no red line about the Reward service, that the currencies match and that the total is above zero. |
+| An order has no reward | Check that your business has a Reward service active, that the payment method is ticked, that **Rewards** is on, and, for cash on delivery, that the order is marked **Completed**. The order's Gamma Wallet box gives the reason. |
 | An error in the order's Gamma Wallet box | If Gamma couldn't be reached, the plugin tries again on its own a few times over the next hour. If the box still shows an error, fix the cause it names (usually the token), then choose **Send the Gamma reward QR code to the customer** under **Order actions**: this creates the reward and emails it. |
 | *Gamma could not be reached* | Your hosting must allow outgoing connections to `https://integration.gamma-wallet.com`. Ask your hosting provider if this message stays. |
 | *Too many requests to Gamma* | Wait a minute and try again. |

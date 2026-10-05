@@ -4,7 +4,7 @@ Tags: loyalty, rewards, store credit, qr code, woocommerce
 Requires at least: 6.3
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ Credits are a promise of value at your shop. They are not money, and Gamma never
 
 = What you need =
 
-* A Gamma Business account, with a reward programme running.
+* A Gamma Business account with a Reward service active. The plugin does nothing for customers while another kind of service is active.
 * An integration token, created in Gamma Business → Integrations.
 * Your shop must sell in the same currency as your Gamma business.
 
@@ -69,6 +69,12 @@ The customer presses "Show a new code" on the same page. The order waits, unpaid
 Yes, with both the block-based and the classic checkout, and with High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.0.2 =
+* Works only while the business has a Reward service active in Gamma: otherwise no reward QR code is given and store credits are not offered at checkout. The settings page and an admin notice say so. The check is repeated every hour.
+
+= 1.0.1 =
+* Cash on delivery, bank transfer and cheque can earn a reward once the order is marked Completed, with an email of its own.
 
 = 1.0.0 =
 * First release: rewards for paid orders, and store credits at checkout.

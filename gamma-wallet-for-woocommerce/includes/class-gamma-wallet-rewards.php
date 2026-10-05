@@ -83,7 +83,7 @@ class Gamma_Wallet_Rewards {
 	 */
 	public static function qualifies( WC_Order $order ): bool {
 		$method = (string) $order->get_payment_method();
-		if ( ! Gamma_Wallet_Settings::rewards_enabled() || (float) $order->get_total() <= 0 ) {
+		if ( ! Gamma_Wallet_Settings::rewards_enabled() || (float) $order->get_total() <= 0 || ! Gamma_Wallet_Settings::reward_service_active() ) {
 			return false;
 		}
 		// Paid later, outside the shop: only once the shop says the money is in, by completing it.
@@ -98,7 +98,7 @@ class Gamma_Wallet_Rewards {
 	/** True when this order can ever earn a reward, now or once it is completed. */
 	public static function may_earn( WC_Order $order ): bool {
 		$method = (string) $order->get_payment_method();
-		return Gamma_Wallet_Settings::rewards_enabled() && Gamma_Wallet_Settings::method_earns_reward( $method );
+		return Gamma_Wallet_Settings::rewards_enabled() && Gamma_Wallet_Settings::reward_service_active() && Gamma_Wallet_Settings::method_earns_reward( $method );
 	}
 
 	/**
@@ -341,6 +341,8 @@ class Gamma_Wallet_Rewards {
 			$error = (string) $order->get_meta( self::META_ERROR );
 			if ( $error ) {
 				echo '<p>' . esc_html( $error ) . '</p>';
+			} elseif ( ! Gamma_Wallet_Settings::reward_service_active() ) {
+				echo '<p>' . esc_html__( 'No reward: your business has no Reward service active in Gamma.', 'gamma-wallet' ) . '</p>';
 			} elseif ( ! self::may_earn( $order ) ) {
 				echo '<p>' . esc_html__( 'This order earns no reward (its payment method does not earn one).', 'gamma-wallet' ) . '</p>';
 			} elseif ( Gamma_Wallet_Settings::is_pay_later( (string) $order->get_payment_method() ) ) {

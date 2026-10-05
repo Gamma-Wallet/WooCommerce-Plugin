@@ -3,7 +3,7 @@
  * Plugin Name:       Gamma Wallet for WooCommerce
  * Plugin URI:        https://www.gamma-wallet.com
  * Description:       Lets your customers earn a reward for every paid order, and settle an order with the store credits they hold at your shop, by scanning a QR code with Gamma Wallet.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires at least: 6.3
  * Requires PHP:      8.1
  * Author:            Gamma Wallet
@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'GAMMA_WALLET_VERSION', '1.0.1' );
+define( 'GAMMA_WALLET_VERSION', '1.0.2' );
 define( 'GAMMA_WALLET_FILE', __FILE__ );
 define( 'GAMMA_WALLET_DIR', plugin_dir_path( __FILE__ ) );
 define( 'GAMMA_WALLET_URL', plugin_dir_url( __FILE__ ) );
