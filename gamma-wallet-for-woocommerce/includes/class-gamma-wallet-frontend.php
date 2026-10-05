@@ -32,6 +32,8 @@ class Gamma_Wallet_Frontend {
 			'gammaWalletText',
 			array(
 				'secondsLeft' => __( '%d s left', 'gamma-wallet' ),
+				/* translators: %s: minutes and seconds, such as 4:59 */
+				'timeLeft'    => __( '%s left', 'gamma-wallet' ),
 				'expired'     => __( 'This code has expired.', 'gamma-wallet' ),
 				'newCode'     => __( 'Show a new code', 'gamma-wallet' ),
 				'settled'     => __( 'Done! Your order is settled with your store credits.', 'gamma-wallet' ),

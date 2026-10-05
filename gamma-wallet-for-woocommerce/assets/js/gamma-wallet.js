@@ -4,7 +4,7 @@
  * Asks this shop (never Gamma) every 5 seconds whether the customer has finished in Gamma Wallet:
  * - reward box: until the reward is collected;
  * - store-credit box: until the order is settled (then opens the order confirmation) or the code
- *   expires (then offers a new code). Shows the 60-second countdown meanwhile.
+ *   expires (then offers a new code). Shows the countdown meanwhile.
  */
 ( function () {
 	'use strict';
@@ -77,17 +77,21 @@
 		var timer = box.querySelector( '.gw-timer' );
 		var bar = box.querySelector( '.gw-timer-bar' );
 		var secondsLeft = parseInt( box.dataset.secondsLeft, 10 ) || 0;
+		// The bar is measured against the code's own validity (60 s on Gamma, longer on a test setup).
+		var totalSeconds = Math.max( 60, secondsLeft );
 		var finished = false;
 		var pollTimer, clockTimer;
 
 		function renderClock() {
 			if ( bar ) {
-				bar.style.width = Math.max( 0, Math.min( 100, ( secondsLeft / 60 ) * 100 ) ) + '%';
+				bar.style.width = Math.max( 0, Math.min( 100, ( secondsLeft / totalSeconds ) * 100 ) ) + '%';
 				timer.classList.toggle( 'gw-low', secondsLeft <= 15 );
 			}
 			show( timer, secondsLeft > 0 );
 			if ( secondsLeft > 0 ) {
-				countdown.textContent = ( text.secondsLeft || '%d s left' ).replace( '%d', secondsLeft );
+				countdown.textContent = secondsLeft >= 60
+					? ( text.timeLeft || '%s left' ).replace( '%s', Math.floor( secondsLeft / 60 ) + ':' + String( secondsLeft % 60 ).padStart( 2, '0' ) )
+					: ( text.secondsLeft || '%d s left' ).replace( '%d', secondsLeft );
 			} else {
 				// The code may still be settled for a few seconds; the status decides.
 				countdown.textContent = '';
@@ -171,6 +175,7 @@
 					img.src = r.body.qr;
 					open.href = r.body.link;
 					secondsLeft = r.body.secondsLeft || 60;
+					totalSeconds = Math.max( 60, secondsLeft );
 					show( img, true );
 					show( open, true );
 					show( newCode, false );
