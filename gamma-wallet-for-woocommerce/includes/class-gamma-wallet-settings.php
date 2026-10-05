@@ -477,7 +477,7 @@ class Gamma_Wallet_Settings {
 		}
 	}
 
-	/** "GWINT_HejHaaj…HNf0": enough to recognise a token, never enough to use it. */
+	/** "GWINT_Ab12Cd3…x9Yz": enough to recognise a token, never enough to use it. */
 	public static function masked( string $token ): string {
 		return strlen( $token ) > 17 ? substr( $token, 0, 13 ) . '…' . substr( $token, -4 ) : '…';
 	}
