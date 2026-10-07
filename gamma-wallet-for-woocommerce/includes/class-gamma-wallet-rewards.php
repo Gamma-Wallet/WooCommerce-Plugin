@@ -86,6 +86,11 @@ class Gamma_Wallet_Rewards {
 		if ( ! Gamma_Wallet_Settings::rewards_enabled() || (float) $order->get_total() <= 0 || ! Gamma_Wallet_Settings::reward_service_active() ) {
 			return false;
 		}
+		// Placed since the plugin was installed: older orders never earn a reward.
+		$created = $order->get_date_created();
+		if ( ! $created || $created->getTimestamp() < Gamma_Wallet_Settings::installed_on() ) {
+			return false;
+		}
 		// Paid later, outside the shop: only once the shop says the money is in, by completing it.
 		if ( Gamma_Wallet_Settings::is_pay_later( $method ) ) {
 			return Gamma_Wallet_Settings::method_earns_reward( $method ) && 'completed' === $order->get_status();
@@ -125,7 +130,7 @@ class Gamma_Wallet_Rewards {
 		try {
 			$bill = $api->create_bill(
 				array(
-					'reference'     => (string) $order->get_order_number(),
+					'reference'     => Gamma_Wallet_Settings::reference( $order ),
 					'total'         => (float) wc_format_decimal( $order->get_total(), wc_get_price_decimals() ),
 					'currencyCode'  => $order->get_currency(),
 					'issuedOn'      => $paid_on ? $paid_on->format( DATE_ATOM ) : null,

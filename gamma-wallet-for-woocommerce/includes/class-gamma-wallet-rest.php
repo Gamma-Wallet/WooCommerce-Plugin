@@ -125,30 +125,33 @@ class Gamma_Wallet_Rest {
 		if ( $order->is_paid() ) {
 			return $done;
 		}
-		$token = (string) $order->get_meta( Gamma_Wallet_Credits_Gateway::META_REQUEST );
-		$api   = Gamma_Wallet_Api::from_settings();
-		if ( '' === $token || ! $api ) {
-			return array(
-				'kind'   => 'credit',
-				'status' => 'Expired',
-			);
-		}
-
-		$checked = $api->check_credit( $token );
+		$checked = Gamma_Wallet_Credits_Gateway::check( $order );
 		if ( 'Paid' === $checked['status'] ) {
-			Gamma_Wallet_Credits_Gateway::mark_settled( $order, $checked );
 			delete_transient( 'gamma_wallet_status_' . $order->get_id() );
 			return $done;
 		}
 		return array(
 			'kind'        => 'credit',
 			'status'      => $checked['status'],
-			'secondsLeft' => (int) $checked['secondsLeft'],
+			'secondsLeft' => (int) ( $checked['secondsLeft'] ?? 0 ),
 		);
 	}
 
 	/** A new QR code for an order whose previous one expired unused. */
 	public static function new_code( WP_REST_Request $request ): WP_REST_Response {
+		// One request at a time per order: a second click or tab waits, then sees the first one's code.
+		$lock = 'code_' . (int) $request['id'];
+		if ( ! Gamma_Wallet_Settings::lock( $lock ) ) {
+			return self::reply( array( 'error' => 'still_valid' ), 409 );
+		}
+		try {
+			return self::new_code_locked( $request );
+		} finally {
+			Gamma_Wallet_Settings::unlock( $lock );
+		}
+	}
+
+	private static function new_code_locked( WP_REST_Request $request ): WP_REST_Response {
 		$order = self::order( $request );
 		if ( ! $order || Gamma_Wallet_Credits_Gateway::ID !== $order->get_payment_method() ) {
 			return self::reply( array( 'error' => 'not_found' ), 404 );
@@ -167,17 +170,14 @@ class Gamma_Wallet_Rest {
 
 		// The customer may have settled the current code a moment ago, before this page asked
 		// Gamma. Ask first, so a settled order is completed instead of getting a new code.
-		$current = (string) $order->get_meta( Gamma_Wallet_Credits_Gateway::META_REQUEST );
-		$api     = Gamma_Wallet_Api::from_settings();
-		if ( '' !== $current && $api ) {
+		if ( '' !== (string) $order->get_meta( Gamma_Wallet_Credits_Gateway::META_REQUEST ) ) {
 			try {
-				$checked = $api->check_credit( $current );
+				$checked = Gamma_Wallet_Credits_Gateway::check( $order );
 			} catch ( Gamma_Wallet_Api_Error $e ) {
 				Gamma_Wallet_Api::log( sprintf( 'Checking the store-credit code of order %s failed: %s', $order->get_order_number(), $e->getMessage() ) );
 				return self::reply( array( 'error' => 'unavailable' ), 503 );
 			}
 			if ( 'Paid' === $checked['status'] ) {
-				Gamma_Wallet_Credits_Gateway::mark_settled( $order, $checked );
 				delete_transient( 'gamma_wallet_status_' . $order->get_id() );
 				return self::reply(
 					array(

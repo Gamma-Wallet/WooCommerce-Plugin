@@ -17,6 +17,8 @@ class Gamma_Wallet_Settings {
 	const CONNECTION_OPTION = 'gamma_wallet_connection';
 	const PAGE              = 'gamma-wallet';
 	const TOKEN_PATTERN     = '/^GWINT_[A-Za-z0-9_-]{43}$/';
+	/** When the plugin was installed (Unix time): orders placed before it never earn a reward. */
+	const INSTALLED_OPTION  = 'gamma_wallet_installed_on';
 
 	/** The statuses a paid order is in. */
 	const PAID_STATUSES = array( 'processing', 'completed' );
@@ -28,6 +30,8 @@ class Gamma_Wallet_Settings {
 	const PAY_LATER_METHODS = array( 'cod', 'bacs', 'cheque' );
 
 	public static function init(): void {
+		// Set once: at the first load after installing (or after updating from 1.0.5 or older).
+		self::installed_on();
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ) );
 		add_action( 'admin_post_gamma_wallet_save', array( __CLASS__, 'save' ) );
 		add_action( 'admin_post_gamma_wallet_test', array( __CLASS__, 'test' ) );
@@ -73,6 +77,46 @@ class Gamma_Wallet_Settings {
 		}
 		$connection = self::connection();
 		return ! empty( $connection['canClaim'] );
+	}
+
+	/** When the plugin was installed. Orders placed before it never earn a reward. */
+	public static function installed_on(): int {
+		$installed = (int) get_option( self::INSTALLED_OPTION, 0 );
+		if ( ! $installed ) {
+			$installed = time();
+			update_option( self::INSTALLED_OPTION, $installed, false );
+		}
+		return $installed;
+	}
+
+	/**
+	 * Six characters fixed for this site, in every order reference sent to Gamma, so a second shop (or
+	 * a staging copy with another salt) on the same Gamma business never reuses one. Derived from the
+	 * site's own secret salt, so it stays the same when the plugin is reinstalled.
+	 */
+	public static function shop_tag(): string {
+		return substr( hash( 'sha256', 'gamma-wallet:' . wp_salt( 'auth' ) ), 0, 6 );
+	}
+
+	/** The reference Gamma knows an order by: "WC-3f9a1c-1042". */
+	public static function reference( WC_Order $order ): string {
+		return 'WC-' . self::shop_tag() . '-' . $order->get_order_number();
+	}
+
+	/**
+	 * A lock held until unlock() (or the end of the request), so two requests for the same order (two
+	 * tabs, a double click, the page and the background check) run one after the other.
+	 */
+	public static function lock( string $name, int $wait = 10 ): bool {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- a database lock, nothing to cache.
+		return 1 === (int) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, %d)', 'gamma_wallet_' . $name, $wait ) );
+	}
+
+	public static function unlock( string $name ): void {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- a database lock, nothing to cache.
+		$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', 'gamma_wallet_' . $name ) );
 	}
 
 	// ------------------------------------------------------------------ reading the settings

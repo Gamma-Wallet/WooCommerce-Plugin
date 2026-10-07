@@ -3,7 +3,7 @@
  * Plugin Name:       Gamma Wallet for WooCommerce
  * Plugin URI:        https://github.com/Gamma-Wallet/WooCommerce-Plugin
  * Description:       Lets your customers earn a reward for every paid order, and settle an order with the store credits they hold at your shop, by scanning a QR code with Gamma Wallet.
- * Version:           1.0.5
+ * Version:           1.0.6
  * Requires at least: 6.3
  * Requires PHP:      8.1
  * Requires Plugins:  woocommerce
@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'GAMMA_WALLET_VERSION', '1.0.5' );
+define( 'GAMMA_WALLET_VERSION', '1.0.6' );
 define( 'GAMMA_WALLET_FILE', __FILE__ );
 define( 'GAMMA_WALLET_DIR', plugin_dir_path( __FILE__ ) );
 define( 'GAMMA_WALLET_URL', plugin_dir_url( __FILE__ ) );
@@ -80,6 +80,17 @@ add_action(
 
 		Gamma_Wallet_Settings::init();
 		Gamma_Wallet_Rewards::init();
+
+		// Every 5 minutes: store-credit orders paid after the customer left the page are settled.
+		add_action( Gamma_Wallet_Credits_Gateway::RECONCILE_HOOK, array( Gamma_Wallet_Credits_Gateway::class, 'reconcile' ) );
+		add_action(
+			'init',
+			static function () {
+				if ( function_exists( 'as_has_scheduled_action' ) && ! as_has_scheduled_action( Gamma_Wallet_Credits_Gateway::RECONCILE_HOOK ) ) {
+					as_schedule_recurring_action( time() + 5 * MINUTE_IN_SECONDS, 5 * MINUTE_IN_SECONDS, Gamma_Wallet_Credits_Gateway::RECONCILE_HOOK, array(), 'gamma-wallet' );
+				}
+			}
+		);
 		Gamma_Wallet_Rest::init();
 		Gamma_Wallet_Frontend::init();
 

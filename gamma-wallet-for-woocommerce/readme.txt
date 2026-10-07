@@ -4,7 +4,7 @@ Tags: loyalty, rewards, store credit, qr code, woocommerce
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,7 @@ Every request carries your integration token, the plugin version and your shop's
 * When an order is paid (or marked Completed, for cash on delivery, bank transfer and cheque, if you turn that on), it sends the order number, the total, the currency and the date, to create the reward QR code, with the name of the platform (WooCommerce). Later it asks whether the customer has collected the reward, sending only the reward's reference.
 * When a customer chooses Use Store Credits with Gamma, it sends the order number, the total and the currency, to create the store-credit QR code and check whether it has been scanned.
 * When you save your token, and about once an hour after that, it checks the connection and whether your business has a Reward service active.
+* About every 5 minutes, for store-credit orders of the last hours that are not settled yet, it asks whether the customer has settled them, sending only the request it got from Gamma.
 
 It sends no customer names, addresses, emails or products.
 
@@ -82,6 +83,13 @@ The customer presses "Show a new code" on the same page. The order waits, unpaid
 Yes, with both the block-based and the classic checkout, and with High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.0.6 =
+* A store-credit order is settled even when the customer confirms in the app and closes the page: the plugin checks waiting orders every 5 minutes.
+* An order is never settled twice, and never gets two live store-credit codes, even with two pages open.
+* An order paid with store credits after it was cancelled is not turned back into a paid order; a note tells you.
+* Only orders placed after the plugin is installed earn rewards.
+* Order references sent to Gamma carry a short tag for your site, so two shops on one Gamma business never mix up their orders.
 
 = 1.0.5 =
 * The settings page moves to WooCommerce → Gamma Wallet.
