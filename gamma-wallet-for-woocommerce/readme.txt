@@ -4,7 +4,7 @@ Tags: loyalty, rewards, store credit, qr code, woocommerce
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,10 @@ The customer presses "Show a new code" on the same page. The order waits, unpaid
 Yes, with both the block-based and the classic checkout, and with High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.0.4 =
+* Declares WooCommerce as a required plugin.
+* Connection and token reminders appear only on the Dashboard, the Plugins page and WooCommerce screens.
 
 = 1.0.3 =
 * Fix: order totals with cents (such as 12.80) are now sent to Gamma exactly. On servers whose PHP sets serialize_precision to 17, the total was sent as 12.800000000000001 and settling such an order with store credits failed.

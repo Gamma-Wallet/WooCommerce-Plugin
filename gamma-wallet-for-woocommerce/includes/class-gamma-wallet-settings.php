@@ -456,8 +456,11 @@ class Gamma_Wallet_Settings {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return;
 		}
+		// Only where it matters: the Dashboard, the Plugins page and WooCommerce's own screens.
+		// The settings page shows the same state itself.
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( $screen && 'toplevel_page_' . self::PAGE === $screen->id ) {
+		$wc_screens = function_exists( 'wc_get_screen_ids' ) ? wc_get_screen_ids() : array();
+		if ( ! $screen || ! in_array( $screen->id, array_merge( array( 'dashboard', 'plugins' ), $wc_screens ), true ) ) {
 			return;
 		}
 		$link       = '<a href="' . esc_url( admin_url( 'admin.php?page=' . self::PAGE ) ) . '">' . esc_html__( 'Gamma Wallet settings', 'gamma-wallet-for-woocommerce' ) . '</a>';
