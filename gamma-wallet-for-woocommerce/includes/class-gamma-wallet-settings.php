@@ -1,6 +1,6 @@
 <?php
 /**
- * The "Gamma Wallet" menu in the WordPress administration: the access token, the connection
+ * WooCommerce → Gamma Wallet in the WordPress administration: the access token, the connection
  * check, and the reward settings.
  *
  * The token is stored in the options table (not autoloaded). The page never shows it again after
@@ -141,14 +141,13 @@ class Gamma_Wallet_Settings {
 	// ------------------------------------------------------------------ the page
 
 	public static function menu(): void {
-		add_menu_page(
+		add_submenu_page(
+			'woocommerce',
 			__( 'Gamma Wallet', 'gamma-wallet-for-woocommerce' ),
 			__( 'Gamma Wallet', 'gamma-wallet-for-woocommerce' ),
 			'manage_woocommerce',
 			self::PAGE,
-			array( __CLASS__, 'render' ),
-			GAMMA_WALLET_URL . 'assets/images/gamma-mark-20.png',
-			56
+			array( __CLASS__, 'render' )
 		);
 	}
 
@@ -458,9 +457,10 @@ class Gamma_Wallet_Settings {
 		}
 		// Only where it matters: the Dashboard, the Plugins page and WooCommerce's own screens.
 		// The settings page shows the same state itself.
-		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		$screen     = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 		$wc_screens = function_exists( 'wc_get_screen_ids' ) ? wc_get_screen_ids() : array();
-		if ( ! $screen || ! in_array( $screen->id, array_merge( array( 'dashboard', 'plugins' ), $wc_screens ), true ) ) {
+		if ( ! $screen || 'woocommerce_page_' . self::PAGE === $screen->id
+			|| ! in_array( $screen->id, array_merge( array( 'dashboard', 'plugins' ), $wc_screens ), true ) ) {
 			return;
 		}
 		$link       = '<a href="' . esc_url( admin_url( 'admin.php?page=' . self::PAGE ) ) . '">' . esc_html__( 'Gamma Wallet settings', 'gamma-wallet-for-woocommerce' ) . '</a>';

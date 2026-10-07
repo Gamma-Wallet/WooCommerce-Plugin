@@ -17,7 +17,7 @@ An order settled with store credits is never declared as a bill (no reward). Ref
 |---|---|
 | `gamma-wallet-for-woocommerce.php` | Bootstrap: HPOS and blocks compatibility, loading, gateway registration |
 | `includes/class-gamma-wallet-api.php` | The only code that calls Gamma (`wp_remote_request`). The token never leaves it |
-| `includes/class-gamma-wallet-settings.php` | The **Gamma Wallet** admin menu: token, connection check, reward settings, reminders |
+| `includes/class-gamma-wallet-settings.php` | **WooCommerce → Gamma Wallet**: token, connection check, reward settings, reminders |
 | `includes/class-gamma-wallet-rewards.php` | Flow 1: declaring the bill, email, My Account, admin meta box |
 | `includes/class-gamma-wallet-credits-gateway.php` | Flow 2: the checkout option (a `WC_Payment_Gateway`) |
 | `includes/class-gamma-wallet-blocks-support.php` + `assets/js/blocks-credits.js` | The checkout option in the block checkout (no build step) |

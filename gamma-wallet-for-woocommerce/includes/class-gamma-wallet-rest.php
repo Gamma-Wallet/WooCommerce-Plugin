@@ -41,7 +41,7 @@ class Gamma_Wallet_Rest {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( __CLASS__, 'status' ),
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( __CLASS__, 'has_order_key' ),
 				'args'                => $args,
 			)
 		);
@@ -51,10 +51,18 @@ class Gamma_Wallet_Rest {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( __CLASS__, 'new_code' ),
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( __CLASS__, 'has_order_key' ),
 				'args'                => $args,
 			)
 		);
+	}
+
+	/**
+	 * Allowed only with the order's key, as on WooCommerce's own order pages: the customer who
+	 * placed the order, with or without an account.
+	 */
+	public static function has_order_key( WP_REST_Request $request ): bool {
+		return null !== self::order( $request );
 	}
 
 	/** The order, only for someone who has its key. */

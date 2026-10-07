@@ -4,7 +4,7 @@ Tags: loyalty, rewards, store credit, qr code, woocommerce
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,11 +30,15 @@ Credits are a promise of value at your shop. They are not money, and Gamma never
 
 This plugin connects to the Gamma Wallet service at integration.gamma-wallet.com, run by Gamma Wallet. It is needed to give rewards and to accept store credits; without an integration token nothing is sent.
 
-* When an order is paid (or marked Completed, for cash on delivery, bank transfer and cheque, if you turn that on), it sends the order number, the total, the currency and the date, to create the reward QR code. Later it asks whether the customer has collected the reward, sending only the reward's reference.
+Every request carries your integration token, the plugin version and your shop's web address.
+
+* When an order is paid (or marked Completed, for cash on delivery, bank transfer and cheque, if you turn that on), it sends the order number, the total, the currency and the date, to create the reward QR code, with the name of the platform (WooCommerce). Later it asks whether the customer has collected the reward, sending only the reward's reference.
 * When a customer chooses Use Store Credits with Gamma, it sends the order number, the total and the currency, to create the store-credit QR code and check whether it has been scanned.
 * When you save your token, and about once an hour after that, it checks the connection and whether your business has a Reward service active.
 
 It sends no customer names, addresses, emails or products.
+
+The QR code images on the order confirmation page, in My Account and in the order emails are loaded from integration.gamma-wallet.com, so the customer's browser or email app contacts that server when it shows them.
 
 * Terms and conditions: https://www.gamma-wallet.com/en/terms-and-conditions
 * Privacy policy: https://www.gamma-wallet.com/en/privacy-policy
@@ -42,7 +46,7 @@ It sends no customer names, addresses, emails or products.
 == Installation ==
 
 1. Upload the plugin and activate it.
-2. Open **Gamma Wallet** in the WordPress menu.
+2. Open **WooCommerce → Gamma Wallet**.
 3. Paste your integration token and press **Save and check the connection**.
 4. Choose which payment methods earn a reward. For cash on delivery, bank transfer and cheque you can choose to give the reward once you mark the order Completed; the customer then receives an email of its own with the QR code.
 5. To offer store credits at checkout, turn on **Use Store Credits with Gamma** in WooCommerce → Settings → Payments.
@@ -78,6 +82,11 @@ The customer presses "Show a new code" on the same page. The order waits, unpaid
 Yes, with both the block-based and the classic checkout, and with High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.0.5 =
+* The settings page moves to WooCommerce → Gamma Wallet.
+* Queued background jobs are removed when the plugin is deactivated or deleted.
+* The order-status routes check the order key before anything else runs.
 
 = 1.0.4 =
 * Declares WooCommerce as a required plugin.

@@ -44,9 +44,9 @@ Both the classic checkout and the newer block checkout work.
 2. In your WordPress admin, go to **Plugins → Add New Plugin → Upload Plugin**.
 3. Choose the zip file, click **Install Now**, then **Activate**.
 
-A new **Gamma Wallet** entry appears in the admin menu on the left.
+A new **Gamma Wallet** entry appears in the **WooCommerce** menu on the left.
 
-![The Gamma Wallet entry in the WordPress admin menu](images/admin-menu.png)
+![Gamma Wallet in the WooCommerce menu](images/admin-menu.png)
 
 ## 3. Create your integration token in Gamma Business
 
@@ -61,7 +61,7 @@ Keep the token private, like a password. Anyone who has it can create rewards fo
 
 ## 4. Connect your shop
 
-1. In WordPress, open **Gamma Wallet**.
+1. In WordPress, open **WooCommerce → Gamma Wallet**.
 2. Paste the token into **Integration token**.
 3. Click **Save and check the connection**.
 
