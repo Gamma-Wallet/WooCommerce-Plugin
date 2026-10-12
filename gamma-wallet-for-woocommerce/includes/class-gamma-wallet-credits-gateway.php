@@ -88,12 +88,39 @@ class Gamma_Wallet_Credits_Gateway extends WC_Payment_Gateway {
 
 	public function process_payment( $order_id ) {
 		$order = wc_get_order( $order_id );
+
+		// "Pay for order" submits an existing order again. The same rules as a new code from the
+		// order page apply: one request at a time per order, and never a second live code, or the
+		// customer could settle the order twice (or settle a code the order no longer tracks).
+		$lock = 'code_' . (int) $order->get_id();
+		if ( ! Gamma_Wallet_Settings::lock( $lock ) ) {
+			wc_add_notice( __( 'This order is already being paid in another window. Please wait a moment and try again.', 'gamma-wallet-for-woocommerce' ), 'error' );
+			return array( 'result' => 'failure' );
+		}
 		try {
-			self::start_request( $order );
+			$reuse = false;
+			if ( '' !== (string) $order->get_meta( self::META_REQUEST ) ) {
+				$checked = self::check( $order );
+				if ( 'Paid' === ( $checked['status'] ?? '' ) ) {
+					// Settled a moment ago: check() has completed the order.
+					return array(
+						'result'   => 'success',
+						'redirect' => $order->get_checkout_order_received_url(),
+					);
+				}
+				// Gamma still accepts a code a few seconds past its time (clock differences).
+				$expires = strtotime( (string) $order->get_meta( self::META_EXPIRES_ON ) );
+				$reuse   = $expires && time() < $expires + 15;
+			}
+			if ( ! $reuse ) {
+				self::start_request( $order );
+			}
 		} catch ( Gamma_Wallet_Api_Error $e ) {
 			Gamma_Wallet_Api::log( sprintf( 'Store-credit request for order %s failed: %s', $order->get_order_number(), $e->getMessage() ) );
 			wc_add_notice( __( 'Store credits cannot be used right now. Please choose another way to pay, or try again in a moment.', 'gamma-wallet-for-woocommerce' ), 'error' );
 			return array( 'result' => 'failure' );
+		} finally {
+			Gamma_Wallet_Settings::unlock( $lock );
 		}
 
 		$order->update_status( 'pending', __( 'Waiting for the customer to settle the order with Gamma store credits.', 'gamma-wallet-for-woocommerce' ) );
