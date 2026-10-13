@@ -4,7 +4,7 @@ Tags: loyalty, rewards, store credit, qr code, woocommerce
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -83,6 +83,9 @@ The customer presses "Show a new code" on the same page. The order waits, unpaid
 Yes, with both the block-based and the classic checkout, and with High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.0.8 =
+* The site's tag in order references is now a random value chosen once and kept in the settings, instead of one derived from WordPress's security salts. Orders already sent to Gamma keep their reference.
 
 = 1.0.7 =
 * Paying an existing order again ("Pay for order") no longer starts a second store-credit code while the first one is still valid: the current code is shown again, and a code the customer already confirmed completes the order.

@@ -159,7 +159,7 @@ class Gamma_Wallet_Credits_Gateway extends WC_Payment_Gateway {
 
 	/** Gamma's answer is about this order: same reference (or the one 1.0.5 sent), total and currency. */
 	private static function matches( WC_Order $order, array $request ): bool {
-		if ( isset( $request['reference'] ) && ! in_array( (string) $request['reference'], array( Gamma_Wallet_Settings::reference( $order ), (string) $order->get_order_number() ), true ) ) {
+		if ( isset( $request['reference'] ) && ! Gamma_Wallet_Settings::is_reference_of( $order, (string) $request['reference'] ) && (string) $request['reference'] !== (string) $order->get_order_number() ) {
 			return false;
 		}
 		if ( isset( $request['currencyCode'] ) && 0 !== strcasecmp( (string) $request['currencyCode'], (string) $order->get_currency() ) ) {

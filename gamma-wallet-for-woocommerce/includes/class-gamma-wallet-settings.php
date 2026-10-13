@@ -19,6 +19,10 @@ class Gamma_Wallet_Settings {
 	const TOKEN_PATTERN     = '/^GWINT_[A-Za-z0-9_-]{43}$/';
 	/** When the plugin was installed (Unix time): orders placed before it never earn a reward. */
 	const INSTALLED_OPTION  = 'gamma_wallet_installed_on';
+	/** This site's tag in order references (see shop_tag()). */
+	const SHOP_TAG_OPTION   = 'gamma_wallet_shop_tag';
+	/** The reference an order was sent to Gamma with. */
+	const META_REFERENCE    = '_gamma_reference';
 
 	/** The statuses a paid order is in. */
 	const PAID_STATUSES = array( 'processing', 'completed' );
@@ -90,17 +94,37 @@ class Gamma_Wallet_Settings {
 	}
 
 	/**
-	 * Six characters fixed for this site, in every order reference sent to Gamma, so a second shop (or
-	 * a staging copy with another salt) on the same Gamma business never reuses one. Derived from the
-	 * site's own secret salt, so it stays the same when the plugin is reinstalled.
+	 * Six random characters chosen once for this site, in every order reference sent to Gamma, so a
+	 * second shop on the same Gamma business never reuses one. Kept when the plugin is deleted, so a
+	 * reinstall sends the same references again.
 	 */
 	public static function shop_tag(): string {
-		return substr( hash( 'sha256', 'gamma-wallet:' . wp_salt( 'auth' ) ), 0, 6 );
+		$tag = (string) get_option( self::SHOP_TAG_OPTION, '' );
+		if ( ! preg_match( '/^[0-9a-f]{6}$/', $tag ) ) {
+			// add_option does nothing when another request saved one first: read back the one kept.
+			add_option( self::SHOP_TAG_OPTION, bin2hex( random_bytes( 3 ) ), '', false );
+			$tag = (string) get_option( self::SHOP_TAG_OPTION, '' );
+		}
+		return $tag;
 	}
 
-	/** The reference Gamma knows an order by: "WC-3f9a1c-1042". */
+	/**
+	 * The reference Gamma knows an order by: "WC-3f9a1c-1042". Kept on the order the first time, so
+	 * the order keeps it even if the site's tag changes.
+	 */
 	public static function reference( WC_Order $order ): string {
-		return 'WC-' . self::shop_tag() . '-' . $order->get_order_number();
+		$reference = (string) $order->get_meta( self::META_REFERENCE );
+		if ( '' === $reference ) {
+			$reference = 'WC-' . self::shop_tag() . '-' . $order->get_order_number();
+			$order->update_meta_data( self::META_REFERENCE, $reference );
+		}
+		return $reference;
+	}
+
+	/** A reference this site sent for the order: its own, or one sent before 1.0.8 (another tag). */
+	public static function is_reference_of( WC_Order $order, string $reference ): bool {
+		return $reference === self::reference( $order )
+			|| 1 === preg_match( '/^WC-[0-9a-f]{6}-' . preg_quote( (string) $order->get_order_number(), '/' ) . '$/', $reference );
 	}
 
 	/**

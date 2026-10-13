@@ -2,7 +2,8 @@
 /**
  * Removes what the plugin stored when it is deleted from the Plugins screen: the settings (with
  * the integration token), the last connection check and any queued background jobs. Orders keep
- * their Gamma notes.
+ * their Gamma notes. The site's six-character tag in order references (gamma_wallet_shop_tag) is
+ * kept, so a reinstall never sends an order to Gamma again under a new reference.
  *
  * @package GammaWallet
  */
