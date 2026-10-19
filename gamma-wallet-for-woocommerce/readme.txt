@@ -82,6 +82,17 @@ The customer presses "Show a new code" on the same page. The order waits, unpaid
 
 Yes, with both the block-based and the classic checkout, and with High-Performance Order Storage.
 
+== Screenshots ==
+
+1. Gamma Wallet in the WooCommerce menu.
+2. The Gamma Wallet settings page.
+3. The store credits option at checkout.
+4. The reward QR code on the order confirmation page.
+5. Settling an order with store credits.
+6. The Gamma Wallet box on an order.
+7. The Gamma Wallet box on an order paid with store credits.
+8. Sending the reward QR code again from the order.
+
 == Changelog ==
 
 = 1.0.8 =
